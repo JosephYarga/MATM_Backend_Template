@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.entity;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,8 +20,8 @@ import java.util.List;
 public class Article {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 500)
     private String title;
@@ -31,13 +32,21 @@ public class Article {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    /** Si vrai, l'article est aussi publié sur la page Facebook. */
+    @Column(name = "publish_to_facebook")
+    @Builder.Default
+    private Boolean publishToFacebook = false;
+
+    /** Contenu spécifique destiné à Facebook (différent du contenu web). */
+    @Column(name = "facebook_content", columnDefinition = "TEXT")
+    private String facebookContent;
+
     @Column(name = "featured_image")
     private String featuredImage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 30)
-    @Builder.Default
-    private ArticleCategory category = ArticleCategory.ACTUALITE;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "category_id", nullable = false)
+    private ArticleCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

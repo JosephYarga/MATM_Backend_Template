@@ -1,11 +1,12 @@
 package bf.gov.mtdpce.dto.response;
+import java.util.UUID;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class FAQResponse {
     
-    private Long id;
+    private UUID id;
     private String question;
     private String answer;
     private String category;
@@ -19,8 +20,8 @@ public class FAQResponse {
     private LocalDateTime updatedAt;
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     
     public String getQuestion() { return question; }
     public void setQuestion(String question) { this.question = question; }

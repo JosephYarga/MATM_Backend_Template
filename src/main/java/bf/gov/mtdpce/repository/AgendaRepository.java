@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.repository;
+import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Agenda;
 import bf.gov.mtdpce.entity.AgendaStatus;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AgendaRepository extends JpaRepository<Agenda, Long> {
+public interface AgendaRepository extends JpaRepository<Agenda, UUID> {
 
     Page<Agenda> findByStatus(AgendaStatus status, Pageable pageable);
 
@@ -28,5 +29,5 @@ public interface AgendaRepository extends JpaRepository<Agenda, Long> {
     @Query("SELECT COUNT(a) FROM Agenda a WHERE a.status = :status")
     Long countByStatus(@Param("status") AgendaStatus status);
 
-    Page<Agenda> findByAuthorId(Long authorId, Pageable pageable);
+    Page<Agenda> findByAuthorId(UUID authorId, Pageable pageable);
 }

@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.controller;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
 import bf.gov.mtdpce.dto.request.FAQRequest;
@@ -45,7 +46,7 @@ public class FAQController {
     
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail d'une FAQ")
-    public ResponseEntity<FAQResponse> getFAQById(@PathVariable Long id) {
+    public ResponseEntity<FAQResponse> getFAQById(@PathVariable UUID id) {
         return ResponseEntity.ok(faqService.getFAQById(id));
     }
     
@@ -61,7 +62,7 @@ public class FAQController {
     @PostMapping("/public/{id}/feedback")
     @Operation(summary = "Donner un avis sur une FAQ")
     public ResponseEntity<ApiResponse> giveFeedback(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam boolean helpful) {
         faqService.markHelpful(id, helpful);
         return ResponseEntity.ok(new ApiResponse(true, "Merci pour votre retour"));
@@ -87,7 +88,7 @@ public class FAQController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     @Operation(summary = "Modifier une FAQ")
     public ResponseEntity<FAQResponse> updateFAQ(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody FAQRequest request) {
         return ResponseEntity.ok(faqService.updateFAQ(id, request));
     }
@@ -95,7 +96,7 @@ public class FAQController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Supprimer une FAQ")
-    public ResponseEntity<ApiResponse> deleteFAQ(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteFAQ(@PathVariable UUID id) {
         faqService.deleteFAQ(id);
         return ResponseEntity.ok(new ApiResponse(true, "FAQ supprimée avec succès"));
     }

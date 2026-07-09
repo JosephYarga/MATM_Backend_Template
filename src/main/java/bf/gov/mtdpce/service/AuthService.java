@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.service;
+import bf.gov.mtdpce.exception.ResourceNotFoundException;
 
 import bf.gov.mtdpce.dto.auth.JwtResponse;
 import bf.gov.mtdpce.dto.auth.LoginRequest;
@@ -104,29 +105,29 @@ public class AuthService {
 
         if (strRoles == null || strRoles.isEmpty()) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Rôle non trouvé"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Rôle non trouvé"));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role.toLowerCase()) {
                     case "admin":
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Rôle non trouvé"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Rôle non trouvé"));
                         roles.add(adminRole);
                         break;
                     case "moderator":
                         Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Rôle non trouvé"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Rôle non trouvé"));
                         roles.add(modRole);
                         break;
                     case "super_admin":
                         Role superAdminRole = roleRepository.findByName(ERole.ROLE_SUPER_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Rôle non trouvé"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Rôle non trouvé"));
                         roles.add(superAdminRole);
                         break;
                     default:
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Rôle non trouvé"));
+                                .orElseThrow(() -> new ResourceNotFoundException("Rôle non trouvé"));
                         roles.add(userRole);
                 }
             });

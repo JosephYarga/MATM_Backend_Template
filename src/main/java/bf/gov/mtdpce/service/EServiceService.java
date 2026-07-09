@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.request.ServiceRequest;
 import bf.gov.mtdpce.dto.response.ServiceResponse;
@@ -56,7 +57,7 @@ public class EServiceService {
         return eServiceRepository.findAllCategories();
     }
     
-    public ServiceResponse getServiceById(Long id) {
+    public ServiceResponse getServiceById(UUID id) {
         EService service = eServiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec l'id: " + id));
         eServiceRepository.incrementViewCount(id);
@@ -70,7 +71,7 @@ public class EServiceService {
         return mapToResponse(saved);
     }
     
-    public ServiceResponse updateService(Long id, ServiceRequest request) {
+    public ServiceResponse updateService(UUID id, ServiceRequest request) {
         EService service = eServiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec l'id: " + id));
         mapRequestToEntity(request, service);
@@ -78,7 +79,7 @@ public class EServiceService {
         return mapToResponse(updated);
     }
     
-    public void deleteService(Long id) {
+    public void deleteService(UUID id) {
         if (!eServiceRepository.existsById(id)) {
             throw new ResourceNotFoundException("Service non trouvé avec l'id: " + id);
         }

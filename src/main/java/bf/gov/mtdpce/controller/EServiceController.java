@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.controller;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
 import bf.gov.mtdpce.dto.request.ServiceRequest;
@@ -53,7 +54,7 @@ public class EServiceController {
     
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail d'un service")
-    public ResponseEntity<ServiceResponse> getServiceById(@PathVariable Long id) {
+    public ResponseEntity<ServiceResponse> getServiceById(@PathVariable UUID id) {
         return ResponseEntity.ok(eServiceService.getServiceById(id));
     }
     
@@ -86,7 +87,7 @@ public class EServiceController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Modifier un service")
     public ResponseEntity<ServiceResponse> updateService(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody ServiceRequest request) {
         return ResponseEntity.ok(eServiceService.updateService(id, request));
     }
@@ -94,7 +95,7 @@ public class EServiceController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Supprimer un service")
-    public ResponseEntity<ApiResponse> deleteService(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteService(@PathVariable UUID id) {
         eServiceService.deleteService(id);
         return ResponseEntity.ok(new ApiResponse(true, "Service supprimé avec succès"));
     }

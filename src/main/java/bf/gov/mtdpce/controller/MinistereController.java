@@ -1,7 +1,9 @@
 package bf.gov.mtdpce.controller;
+import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.MinistereDTO;
+import bf.gov.mtdpce.dto.request.MinistereRequest;
+import bf.gov.mtdpce.dto.response.MinistereResponse;
 import bf.gov.mtdpce.service.MinistereService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import bf.gov.mtdpce.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,11 +37,12 @@ public class MinistereController {
     @Autowired
     private MinistereService ministereService;
 
-    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
+    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
+    private String UPLOAD_BASE_PATH;
 
     @GetMapping
     @Operation(summary = "Liste des ministères")
-    public ResponseEntity<ApiResponse<Page<MinistereDTO>>> getAllMinisteres(
+    public ResponseEntity<ApiResponse<Page<MinistereResponse>>> getAllMinisteres(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nomReel") String sortBy,
@@ -56,7 +61,7 @@ public class MinistereController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'un ministère")
-    public ResponseEntity<ApiResponse<MinistereDTO>> getMinistereById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<MinistereResponse>> getMinistereById(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(ministereService.getById(id))
@@ -66,9 +71,9 @@ public class MinistereController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un ministère", description = "Crée un ministère avec logo optionnel")
-    public ResponseEntity<MinistereDTO> createMinistere(
-            @RequestPart("ministere") MinistereDTO ministereDTO,
-            @RequestParam Long authorId,
+    public ResponseEntity<MinistereResponse> createMinistere(
+            @RequestPart("ministere") MinistereRequest ministereDTO,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestPart(value = "logo", required = false) MultipartFile logo,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
@@ -84,7 +89,7 @@ public class MinistereController {
                 ministereDTO.setImage(filePath);
             }
 
-            MinistereDTO saved = ministereService.create(ministereDTO, authorId);
+            MinistereResponse saved = ministereService.create(ministereDTO, userDetails.getId());
 
             return ResponseEntity.ok(saved);
 
@@ -96,9 +101,9 @@ public class MinistereController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un ministère")
-    public ResponseEntity<MinistereDTO> updateMinistere(
-            @PathVariable Long id,
-            @RequestPart("ministere") MinistereDTO ministereDTO,
+    public ResponseEntity<MinistereResponse> updateMinistere(
+            @PathVariable UUID id,
+            @RequestPart("ministere") MinistereRequest ministereDTO,
             @RequestPart(value = "logo", required = false) MultipartFile logo,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
@@ -114,7 +119,7 @@ public class MinistereController {
                 ministereDTO.setImage(filePath);
             }
 
-            MinistereDTO updated = ministereService.update(id, ministereDTO);
+            MinistereResponse updated = ministereService.update(id, ministereDTO);
 
             return ResponseEntity.ok(updated);
 
@@ -126,7 +131,7 @@ public class MinistereController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un ministère")
-    public ResponseEntity<ApiResponse<Void>> deleteMinistere(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteMinistere(@PathVariable UUID id) {
 
         ministereService.delete(id);
 
@@ -140,7 +145,7 @@ public class MinistereController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new RuntimeException("Type de fichier inconnu");
+            throw new BadRequestException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -153,7 +158,7 @@ public class MinistereController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new RuntimeException("Type de fichier non supporté : " + contentType);
+            throw new BadRequestException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

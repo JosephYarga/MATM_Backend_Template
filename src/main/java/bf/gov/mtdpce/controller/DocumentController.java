@@ -1,8 +1,9 @@
 package bf.gov.mtdpce.controller;
+import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.ArticleDTO;
-import bf.gov.mtdpce.dto.DocumentDTO;
+import bf.gov.mtdpce.dto.request.DocumentRequest;
+import bf.gov.mtdpce.dto.response.DocumentResponse;
 import bf.gov.mtdpce.entity.DocumentCategory;
 import bf.gov.mtdpce.security.UserDetailsImpl;
 import bf.gov.mtdpce.service.DocumentService;
@@ -37,12 +38,13 @@ public class DocumentController {
 
     @Autowired
     private DocumentService documentService;
-    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
+    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
+    private String UPLOAD_BASE_PATH;
 
     // Public endpoints
     @GetMapping("/public")
     @Operation(summary = "Documents publics", description = "Récupère la liste des documents publics")
-    public ResponseEntity<ApiResponse<Page<DocumentDTO>>> getPublicDocuments(
+    public ResponseEntity<ApiResponse<Page<DocumentResponse>>> getPublicDocuments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
@@ -50,15 +52,29 @@ public class DocumentController {
         return ResponseEntity.ok(ApiResponse.success(documentService.getPublicDocuments(pageable)));
     }
 
+    @GetMapping("/public/browse")
+    @Operation(summary = "Navigation documents (type + facettes)",
+            description = "Documents publics filtrés par type (Règlementation / Stratégie) et catégorie, paginés, avec facettes")
+    public ResponseEntity<ApiResponse<bf.gov.mtdpce.dto.response.DocumentBrowseResponse>> browse(
+            @RequestParam String typeDocument,
+            @RequestParam(required = false) DocumentCategory category,
+            @RequestParam(required = false) String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return ResponseEntity.ok(ApiResponse.success(documentService.browsePublic(typeDocument, category, query, pageable)));
+    }
+
     @GetMapping("/public/latest")
     @Operation(summary = "Derniers documents", description = "Récupère les 10 derniers documents publics")
-    public ResponseEntity<ApiResponse<List<DocumentDTO>>> getLatestPublicDocuments() {
+    public ResponseEntity<ApiResponse<List<DocumentResponse>>> getLatestPublicDocuments() {
         return ResponseEntity.ok(ApiResponse.success(documentService.getLatestPublicDocuments()));
     }
 
     @GetMapping("/public/category/{category}")
     @Operation(summary = "Documents par catégorie", description = "Récupère les documents d'une catégorie")
-    public ResponseEntity<ApiResponse<Page<DocumentDTO>>> getDocumentsByCategory(
+    public ResponseEntity<ApiResponse<Page<DocumentResponse>>> getDocumentsByCategory(
             @PathVariable DocumentCategory category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -69,7 +85,7 @@ public class DocumentController {
 
     @GetMapping("/public/search")
     @Operation(summary = "Recherche de documents", description = "Recherche dans les documents publics")
-    public ResponseEntity<ApiResponse<Page<DocumentDTO>>> searchPublicDocuments(
+    public ResponseEntity<ApiResponse<Page<DocumentResponse>>> searchPublicDocuments(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -80,13 +96,13 @@ public class DocumentController {
 
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail document", description = "Récupère un document par son ID")
-    public ResponseEntity<ApiResponse<DocumentDTO>> getPublicDocumentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<DocumentResponse>> getPublicDocumentById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.success(documentService.getDocumentById(id)));
     }
 
     @PostMapping("/public/{id}/download")
     @Operation(summary = "Télécharger document", description = "Incrémente le compteur de téléchargement")
-    public ResponseEntity<ApiResponse<Void>> downloadDocument(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> downloadDocument(@PathVariable UUID id) {
         documentService.incrementDownloadCount(id);
         return ResponseEntity.ok(ApiResponse.success("Téléchargement enregistré", null));
     }
@@ -95,7 +111,7 @@ public class DocumentController {
     @GetMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Tous les documents", description = "Récupère tous les documents (admin)")
-    public ResponseEntity<ApiResponse<Page<DocumentDTO>>> getAllDocuments(
+    public ResponseEntity<ApiResponse<Page<DocumentResponse>>> getAllDocuments(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -110,15 +126,15 @@ public class DocumentController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Détail document (admin)", description = "Récupère un document par son ID (admin)")
-    public ResponseEntity<ApiResponse<DocumentDTO>> getDocumentById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<DocumentResponse>> getDocumentById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.success(documentService.getDocumentById(id)));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un document", description = "Crée un nouveau document")
-    public ResponseEntity<ApiResponse<DocumentDTO>> createDocument(
-            @RequestPart("document") DocumentDTO documentDTO,
+    public ResponseEntity<ApiResponse<DocumentResponse>> createDocument(
+            @RequestPart("document") DocumentRequest documentDTO,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
@@ -144,9 +160,9 @@ public class DocumentController {
     )
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un document", description = "Met à jour un document existant")
-    public ResponseEntity<ApiResponse<DocumentDTO>> updateDocument(
-            @PathVariable Long id,
-            @RequestPart("document") DocumentDTO documentDTO,
+    public ResponseEntity<ApiResponse<DocumentResponse>> updateDocument(
+            @PathVariable UUID id,
+            @RequestPart("document") DocumentRequest documentDTO,
             @RequestPart(value = "file", required = false) MultipartFile file) {
         try {
             if (file != null && !file.isEmpty()) {
@@ -165,7 +181,7 @@ public class DocumentController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un document", description = "Supprime un document")
-    public ResponseEntity<ApiResponse<Void>> deleteDocument(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteDocument(@PathVariable UUID id) {
         documentService.deleteDocument(id);
         return ResponseEntity.ok(ApiResponse.success("Document supprimé", null));
     }
@@ -175,7 +191,7 @@ public class DocumentController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new RuntimeException("Type de fichier inconnu");
+            throw new BadRequestException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -188,7 +204,7 @@ public class DocumentController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new RuntimeException("Type de fichier non supporté : " + contentType);
+            throw new BadRequestException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

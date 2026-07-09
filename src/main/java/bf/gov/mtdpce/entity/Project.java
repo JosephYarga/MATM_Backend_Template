@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.entity;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,8 +20,8 @@ import java.time.LocalDateTime;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 255)
     private String name;

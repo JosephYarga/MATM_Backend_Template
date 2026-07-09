@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.request.EventRequest;
 import bf.gov.mtdpce.dto.response.EventResponse;
@@ -44,7 +45,7 @@ public class EventService {
                 .collect(Collectors.toList());
     }
     
-    public EventResponse getEventById(Long id) {
+    public EventResponse getEventById(UUID id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Événement non trouvé avec l'id: " + id));
         return mapToResponse(event);
@@ -57,7 +58,7 @@ public class EventService {
         return mapToResponse(saved);
     }
     
-    public EventResponse updateEvent(Long id, EventRequest request) {
+    public EventResponse updateEvent(UUID id, EventRequest request) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Événement non trouvé avec l'id: " + id));
         mapRequestToEntity(request, event);
@@ -65,7 +66,7 @@ public class EventService {
         return mapToResponse(updated);
     }
     
-    public void deleteEvent(Long id) {
+    public void deleteEvent(UUID id) {
         if (!eventRepository.existsById(id)) {
             throw new ResourceNotFoundException("Événement non trouvé avec l'id: " + id);
         }

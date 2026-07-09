@@ -1,8 +1,10 @@
 package bf.gov.mtdpce.controller;
+import java.util.UUID;
 
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.MissionDTO;
+import bf.gov.mtdpce.dto.request.MissionRequest;
+import bf.gov.mtdpce.dto.response.MissionResponse;
 import bf.gov.mtdpce.service.MissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,7 +27,7 @@ public class MissionController {
 
     @GetMapping
     @Operation(summary = "Liste des missions")
-    public ResponseEntity<ApiResponse<Page<MissionDTO>>> getAllMissions(
+    public ResponseEntity<ApiResponse<Page<MissionResponse>>> getAllMissions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "categorie") String sortBy,
@@ -44,8 +46,8 @@ public class MissionController {
 
     @GetMapping("/ministere/{ministereId}")
     @Operation(summary = "Liste des missions par ministère")
-    public ResponseEntity<ApiResponse<Page<MissionDTO>>> getMissionsByMinistere(
-            @PathVariable Long ministereId,
+    public ResponseEntity<ApiResponse<Page<MissionResponse>>> getMissionsByMinistere(
+            @PathVariable UUID ministereId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -58,7 +60,7 @@ public class MissionController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'une mission")
-    public ResponseEntity<ApiResponse<MissionDTO>> getMissionById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<MissionResponse>> getMissionById(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(missionService.getById(id))
@@ -68,7 +70,7 @@ public class MissionController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer une mission")
-    public ResponseEntity<MissionDTO> createMission(@RequestBody MissionDTO missionDTO) {
+    public ResponseEntity<MissionResponse> createMission(@RequestBody MissionRequest missionDTO) {
 
         return ResponseEntity.ok(
                 missionService.create(missionDTO)
@@ -78,9 +80,9 @@ public class MissionController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier une mission")
-    public ResponseEntity<MissionDTO> updateMission(
-            @PathVariable Long id,
-            @RequestBody MissionDTO missionDTO) {
+    public ResponseEntity<MissionResponse> updateMission(
+            @PathVariable UUID id,
+            @RequestBody MissionRequest missionDTO) {
 
         return ResponseEntity.ok(
                 missionService.update(id, missionDTO)
@@ -90,7 +92,7 @@ public class MissionController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer une mission")
-    public ResponseEntity<ApiResponse<Void>> deleteMission(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteMission(@PathVariable UUID id) {
 
         missionService.delete(id);
 

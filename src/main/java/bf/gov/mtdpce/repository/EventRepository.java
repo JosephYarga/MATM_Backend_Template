@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.repository;
+import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Event;
 import bf.gov.mtdpce.entity.EventStatus;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, UUID> {
     
     Page<Event> findByIsPublicTrueOrderByStartDateDesc(Pageable pageable);
     

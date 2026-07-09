@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.entity;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 public class Ministere {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String nomGeneral;

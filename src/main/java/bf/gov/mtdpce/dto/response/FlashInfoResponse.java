@@ -1,10 +1,11 @@
 package bf.gov.mtdpce.dto.response;
+import java.util.UUID;
 
 import java.time.LocalDateTime;
 
 public class FlashInfoResponse {
     
-    private Long id;
+    private UUID id;
     private String title;
     private String content;
     private String linkUrl;
@@ -18,8 +19,8 @@ public class FlashInfoResponse {
     private String createdBy;
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

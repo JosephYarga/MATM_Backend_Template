@@ -1,7 +1,9 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
-import bf.gov.mtdpce.dto.CreateUserDTO;
-import bf.gov.mtdpce.dto.UserDTO;
+import bf.gov.mtdpce.dto.request.UserRequest;
+import bf.gov.mtdpce.dto.response.UserResponse;
+import bf.gov.mtdpce.dto.request.UserUpdateRequest;
 import bf.gov.mtdpce.entity.ERole;
 import bf.gov.mtdpce.entity.Role;
 import bf.gov.mtdpce.entity.User;
@@ -30,28 +32,28 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Page<UserDTO> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(this::convertToDTO);
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable).map(this::convertToResponse);
     }
 
-    public Page<UserDTO> searchUsers(String search, Pageable pageable) {
-        return userRepository.searchUsers(search, pageable).map(this::convertToDTO);
+    public Page<UserResponse> searchUsers(String search, Pageable pageable) {
+        return userRepository.searchUsers(search, pageable).map(this::convertToResponse);
     }
 
-    public UserDTO getUserById(Long id) {
+    public UserResponse getUserById(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
-        return convertToDTO(user);
+        return convertToResponse(user);
     }
 
-    public UserDTO getUserByUsername(String username) {
+    public UserResponse getUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "username", username));
-        return convertToDTO(user);
+        return convertToResponse(user);
     }
 
     @Transactional
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public UserResponse updateUser(UUID id, UserUpdateRequest userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
 
@@ -72,7 +74,7 @@ public class UserService {
                     throw new BadRequestException("Rôle invalide : " + roleName);
                 }
                 Role role = roleRepository.findByName(eRole)
-                        .orElseThrow(() -> new RuntimeException("Rôle introuvable : " + roleName));
+                        .orElseThrow(() -> new ResourceNotFoundException("Rôle introuvable : " + roleName));
                 roles.add(role);
             }
             if (roles.isEmpty()) {
@@ -88,11 +90,11 @@ public class UserService {
         if (userDTO.getDepartment() != null) user.setDepartment(userDTO.getDepartment());
         if (userDTO.getProfileImage() != null) user.setProfileImage(userDTO.getProfileImage());
 
-        return convertToDTO(userRepository.save(user));
+        return convertToResponse(userRepository.save(user));
     }
 
     @Transactional
-    public void changePassword(Long id, String oldPassword, String newPassword) {
+    public void changePassword(UUID id, String oldPassword, String newPassword) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
 
@@ -104,8 +106,29 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /** Réinitialisation par un administrateur (sans ancien mot de passe). */
     @Transactional
-    public void toggleUserStatus(Long id) {
+    public void adminResetPassword(UUID id, String newPassword) {
+        if (newPassword == null || newPassword.length() < 6) {
+            throw new BadRequestException("Le mot de passe doit contenir au moins 6 caractères");
+        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+    /** Désactivation du compte (par l'utilisateur lui-même ou un admin). */
+    @Transactional
+    public void deactivateUser(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void toggleUserStatus(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
         if(user.getEnabled())
@@ -119,7 +142,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
+    public void deleteUser(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("Utilisateur", "id", id);
         }
@@ -131,7 +154,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO createUser(CreateUserDTO dto) {
+    public UserResponse createUser(UserRequest dto) {
 
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new BadRequestException("Ce nom d'utilisateur est déjà utilisé");
@@ -145,12 +168,12 @@ public class UserService {
 
         if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Rôle ROLE_USER introuvable"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Rôle ROLE_USER introuvable"));
             roles.add(userRole);
         } else {
             for (String roleName : dto.getRoles()) {
                 Role role = roleRepository.findByName(ERole.valueOf(roleName))
-                        .orElseThrow(() -> new RuntimeException("Rôle introuvable : " + roleName));
+                        .orElseThrow(() -> new ResourceNotFoundException("Rôle introuvable : " + roleName));
                 roles.add(role);
             }
         }
@@ -169,11 +192,11 @@ public class UserService {
                 .roles(roles)
                 .build();
 
-        return convertToDTO(userRepository.save(user));
+        return convertToResponse(userRepository.save(user));
     }
 
-    private UserDTO convertToDTO(User user) {
-        return UserDTO.builder()
+    private UserResponse convertToResponse(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())

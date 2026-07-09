@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.repository;
+import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Structure;
 import bf.gov.mtdpce.entity.StructureType;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StructureRepository extends JpaRepository<Structure, Long> {
+public interface StructureRepository extends JpaRepository<Structure, UUID> {
 
     boolean existsByAcronym(String acronym);
     Page<Structure> findByStructureType(StructureType structureType, Pageable pageable);

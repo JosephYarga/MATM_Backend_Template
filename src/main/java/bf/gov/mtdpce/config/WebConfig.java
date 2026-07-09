@@ -8,7 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
+    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
+    private String UPLOAD_BASE_PATH;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.entity;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,13 +20,13 @@ import java.util.List;
 @Builder
 public class Agenda {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
 
     @Column(nullable = false, columnDefinition = "TEXT")

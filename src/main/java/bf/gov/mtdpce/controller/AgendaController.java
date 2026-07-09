@@ -1,7 +1,10 @@
 package bf.gov.mtdpce.controller;
+import bf.gov.mtdpce.exception.BadRequestException;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.AgendaDTO;
+import bf.gov.mtdpce.dto.request.AgendaRequest;
+import bf.gov.mtdpce.dto.response.AgendaResponse;
 import bf.gov.mtdpce.service.AgendaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +13,8 @@ import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import bf.gov.mtdpce.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +31,8 @@ public class AgendaController {
     @Autowired
     private AgendaService agendaService;
 
-    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
+    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
+    private String UPLOAD_BASE_PATH;
 
     /*
      * ============================================
@@ -36,7 +42,7 @@ public class AgendaController {
 
     @GetMapping("/published")
     @Operation(summary = "Agenda publiés", description = "Récupère la liste des agendas publiés")
-    public ResponseEntity<ApiResponse<Page<AgendaDTO>>> getPublishedAgenda(
+    public ResponseEntity<ApiResponse<Page<AgendaResponse>>> getPublishedAgenda(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -48,7 +54,7 @@ public class AgendaController {
 
     @GetMapping("/published/latest")
     @Operation(summary = "Derniers agendas", description = "Récupère les 5 derniers agendas publiés")
-    public ResponseEntity<ApiResponse<List<AgendaDTO>>> getLatestAgenda() {
+    public ResponseEntity<ApiResponse<List<AgendaResponse>>> getLatestAgenda() {
         return ResponseEntity.ok(ApiResponse.success(
                 agendaService.getLatestAgenda()
         ));
@@ -56,7 +62,7 @@ public class AgendaController {
 
     @GetMapping("/published/search")
     @Operation(summary = "Recherche d'agenda", description = "Recherche dans les agendas publiés")
-    public ResponseEntity<ApiResponse<Page<AgendaDTO>>> searchPublishedAgenda(
+    public ResponseEntity<ApiResponse<Page<AgendaResponse>>> searchPublishedAgenda(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -69,7 +75,7 @@ public class AgendaController {
 
     @GetMapping("/published/{id}")
     @Operation(summary = "Détail agenda publié", description = "Récupère un agenda publié par son ID")
-    public ResponseEntity<ApiResponse<AgendaDTO>> getPublishedAgendaById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<AgendaResponse>> getPublishedAgendaById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.success(
                 agendaService.getPublishedAgendaById(id)
         ));
@@ -84,7 +90,7 @@ public class AgendaController {
     @GetMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Tous les agendas", description = "Récupère tous les agendas (admin)")
-    public ResponseEntity<ApiResponse<Page<AgendaDTO>>> getAllAgenda(
+    public ResponseEntity<ApiResponse<Page<AgendaResponse>>> getAllAgenda(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -104,7 +110,7 @@ public class AgendaController {
     @GetMapping("/{id}")
 //    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Détail agenda", description = "Récupère un agenda par son ID (admin)")
-    public ResponseEntity<ApiResponse<AgendaDTO>> getAgendaById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<AgendaResponse>> getAgendaById(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.success(
                 agendaService.getAgendaById(id)
         ));
@@ -119,18 +125,18 @@ public class AgendaController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un agenda", description = "Crée un nouvel agenda avec image ou document")
-    public ResponseEntity<AgendaDTO> createAgenda(
-            @RequestPart("agenda") AgendaDTO agendaDTO,
-            @RequestParam Long authorId,
+    public ResponseEntity<AgendaResponse> createAgenda(
+            @RequestPart("agenda") AgendaRequest agendaDTO,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
         try {
 
             List<String> imagePaths = uploadMultipleFiles(files);
 
-            AgendaDTO saved = agendaService.createAgenda(
+            AgendaResponse saved = agendaService.createAgenda(
                     agendaDTO,
-                    authorId,
+                    userDetails.getId(),
                     imagePaths
             );
 
@@ -153,16 +159,16 @@ public class AgendaController {
             summary = "Modifier un agenda",
             description = "Modifie un agenda existant avec ou sans nouveau fichier"
     )
-    public ResponseEntity<AgendaDTO> updateAgenda(
-            @PathVariable Long id,
-            @RequestPart("agenda") AgendaDTO agendaDTO,
+    public ResponseEntity<AgendaResponse> updateAgenda(
+            @PathVariable UUID id,
+            @RequestPart("agenda") AgendaRequest agendaDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
 
         try {
 
             List<String> imagePaths = uploadMultipleFiles(files);
 
-            AgendaDTO updated = agendaService.updateAgenda(
+            AgendaResponse updated = agendaService.updateAgenda(
                     id,
                     agendaDTO,
                     imagePaths
@@ -184,7 +190,7 @@ public class AgendaController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un agenda", description = "Supprime un agenda")
-    public ResponseEntity<ApiResponse<Void>> deleteAgenda(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteAgenda(@PathVariable UUID id) {
 
         agendaService.deleteArticle(id);
 
@@ -220,7 +226,7 @@ public class AgendaController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new RuntimeException("Type de fichier inconnu");
+            throw new BadRequestException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -233,7 +239,7 @@ public class AgendaController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new RuntimeException("Type de fichier non supporté : " + contentType);
+            throw new BadRequestException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

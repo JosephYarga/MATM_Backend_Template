@@ -1,7 +1,7 @@
 package bf.gov.mtdpce.controller;
+import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.ArticleDTO;
 import bf.gov.mtdpce.dto.request.EventRequest;
 import bf.gov.mtdpce.dto.response.EventResponse;
 import bf.gov.mtdpce.dto.response.PaginatedResponse;
@@ -33,7 +33,8 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
+    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
+    private String UPLOAD_BASE_PATH;
     
     @GetMapping("/public")
     @Operation(summary = "Liste des événements publics")
@@ -51,7 +52,7 @@ public class EventController {
     
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail d'un événement")
-    public ResponseEntity<EventResponse> getEventById(@PathVariable Long id) {
+    public ResponseEntity<EventResponse> getEventById(@PathVariable UUID id) {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
     
@@ -98,7 +99,7 @@ public class EventController {
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un événement")
     public ResponseEntity<EventResponse> updateEvent(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestPart("evenement") EventRequest request,
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
@@ -119,7 +120,7 @@ public class EventController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un événement")
-    public ResponseEntity<ApiResponse> deleteEvent(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteEvent(@PathVariable UUID id) {
         eventService.deleteEvent(id);
         return ResponseEntity.ok(new ApiResponse(true, "Événement supprimé avec succès"));
     }
@@ -129,7 +130,7 @@ public class EventController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new RuntimeException("Type de fichier inconnu");
+            throw new BadRequestException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -142,7 +143,7 @@ public class EventController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new RuntimeException("Type de fichier non supporté : " + contentType);
+            throw new BadRequestException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

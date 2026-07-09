@@ -1,12 +1,14 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
-import bf.gov.mtdpce.dto.AgendaImageDTO;
-import bf.gov.mtdpce.dto.ArticleDTO;
-import bf.gov.mtdpce.dto.ArticleImageDTO;
-import bf.gov.mtdpce.dto.FacebookImageDTO;
+import bf.gov.mtdpce.dto.response.ArticleImageResponse;
+import bf.gov.mtdpce.dto.response.FacebookImageResponse;
+import bf.gov.mtdpce.dto.request.ArticleRequest;
+import bf.gov.mtdpce.dto.response.ArticleResponse;
 import bf.gov.mtdpce.entity.*;
 import bf.gov.mtdpce.event.ArticlePublishedEvent;
 import bf.gov.mtdpce.exception.ResourceNotFoundException;
+import bf.gov.mtdpce.repository.ArticleCategoryRepository;
 import bf.gov.mtdpce.repository.ArticleRepository;
 import bf.gov.mtdpce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,48 +33,63 @@ public class ArticleService {
     private UserRepository userRepository;
 
     @Autowired
+    private ArticleCategoryRepository articleCategoryRepository;
+
+    @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    public Page<ArticleDTO> getAllArticles(Pageable pageable) {
-        return articleRepository.findAll(pageable).map(this::convertToDTO);
+    private static final String DEFAULT_CATEGORY_CODE = "ACTUALITE";
+
+    /** Résout une catégorie à partir de son code, avec repli sur la catégorie par défaut. */
+    private ArticleCategory resolveCategory(String code) {
+        if (code != null && !code.isBlank()) {
+            return articleCategoryRepository.findByCode(code)
+                    .orElseThrow(() -> new ResourceNotFoundException("Catégorie d'article", "code", code));
+        }
+        return articleCategoryRepository.findByCode(DEFAULT_CATEGORY_CODE)
+                .orElseThrow(() -> new ResourceNotFoundException("Catégorie d'article", "code", DEFAULT_CATEGORY_CODE));
     }
 
-    public Page<ArticleDTO> getPublishedArticles(Pageable pageable) {
-        return articleRepository.findByStatus(ArticleStatus.PUBLISHED, pageable).map(this::convertToDTO);
+    public Page<ArticleResponse> getAllArticles(Pageable pageable) {
+        return articleRepository.findAll(pageable).map(this::convertToResponse);
     }
 
-    public Page<ArticleDTO> getArticlesByCategory(ArticleCategory category, Pageable pageable) {
-        return articleRepository.findByStatusAndCategory(ArticleStatus.PUBLISHED, category, pageable)
-                .map(this::convertToDTO);
+    public Page<ArticleResponse> getPublishedArticles(Pageable pageable) {
+        return articleRepository.findByStatus(ArticleStatus.PUBLISHED, pageable).map(this::convertToResponse);
     }
 
-    public Page<ArticleDTO> searchPublishedArticles(String search, Pageable pageable) {
+    public Page<ArticleResponse> getArticlesByCategory(String categoryCode, Pageable pageable) {
+        return articleRepository.findByStatusAndCategory_Code(ArticleStatus.PUBLISHED, categoryCode, pageable)
+                .map(this::convertToResponse);
+    }
+
+    public Page<ArticleResponse> searchPublishedArticles(String search, Pageable pageable) {
         return articleRepository.searchPublishedArticles(search, ArticleStatus.PUBLISHED, pageable)
-                .map(this::convertToDTO);
+                .map(this::convertToResponse);
     }
 
-    public List<ArticleDTO> getLatestArticles() {
+    public List<ArticleResponse> getLatestArticles() {
         return articleRepository.findTop5ByStatusOrderByPublishedAtDesc(ArticleStatus.PUBLISHED)
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public List<ArticleDTO> getFeaturedArticles() {
+    public List<ArticleResponse> getFeaturedArticles() {
         return articleRepository.findByFeaturedTrueAndStatusOrderByPublishedAtDesc(ArticleStatus.PUBLISHED)
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public ArticleDTO getArticleById(Long id) {
+    public ArticleResponse getArticleById(UUID id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
-        return convertToDTO(article);
+        return convertToResponse(article);
     }
 
     @Transactional
-    public ArticleDTO getPublishedArticleById(Long id) {
+    public ArticleResponse getPublishedArticleById(UUID id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
         
@@ -84,11 +101,11 @@ public class ArticleService {
         article.setViewCount(article.getViewCount() + 1);
         articleRepository.save(article);
         
-        return convertToDTO(article);
+        return convertToResponse(article);
     }
 
     @Transactional
-    public ArticleDTO createArticle(ArticleDTO articleDTO, Long authorId,List<String> imagePaths,List<String> imagePathsFacebook) {
+    public ArticleResponse createArticle(ArticleRequest articleDTO, UUID authorId,List<String> imagePaths,List<String> imagePathsFacebook) {
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", authorId));
 
@@ -97,9 +114,11 @@ public class ArticleService {
                 .summary(articleDTO.getSummary())
                 .content(articleDTO.getContent())
                 .featuredImage(articleDTO.getFeaturedImage())
-                .category(articleDTO.getCategory() != null ? articleDTO.getCategory() : ArticleCategory.ACTUALITE)
+                .category(resolveCategory(articleDTO.getCategory()))
                 .status(articleDTO.getStatus() != null ? articleDTO.getStatus() : ArticleStatus.DRAFT)
                 .featured(articleDTO.getFeatured() != null ? articleDTO.getFeatured() : false)
+                .publishToFacebook(articleDTO.getPublishToFacebook() != null ? articleDTO.getPublishToFacebook() : false)
+                .facebookContent(articleDTO.getFacebookContent())
                 .author(author)
                 .viewCount(0)
                 .images(new ArrayList<>())
@@ -131,19 +150,20 @@ public class ArticleService {
         }
         Article saved = articleRepository.save(article);
 
-        // NOUVEAU : publier sur Facebook si statut PUBLISHED dès la création
-        if (saved.getStatus() == ArticleStatus.PUBLISHED) {
+        // NOUVEAU : publier sur Facebook si statut PUBLISHED dès la création ET case cochée
+        if (saved.getStatus() == ArticleStatus.PUBLISHED
+                && Boolean.TRUE.equals(saved.getPublishToFacebook())) {
 //            eventPublisher.publishEvent(new ArticlePublishedEvent(saved));
             Article articleAvecImages = articleRepository
                     .findWithFacebookImagesById(saved.getId())
                     .orElse(saved);
             eventPublisher.publishEvent(new ArticlePublishedEvent(articleAvecImages));
         }
-        return convertToDTO(saved);
+        return convertToResponse(saved);
     }
 
     @Transactional
-    public ArticleDTO updateArticle(Long id, ArticleDTO articleDTO,List<String> imagePaths,List<String> imagePathsFacebook) {
+    public ArticleResponse updateArticle(UUID id, ArticleRequest articleDTO,List<String> imagePaths,List<String> imagePathsFacebook) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
 
@@ -154,8 +174,10 @@ public class ArticleService {
         if (articleDTO.getSummary() != null) article.setSummary(articleDTO.getSummary());
         if (articleDTO.getContent() != null) article.setContent(articleDTO.getContent());
         if (articleDTO.getFeaturedImage() != null) article.setFeaturedImage(articleDTO.getFeaturedImage());
-        if (articleDTO.getCategory() != null) article.setCategory(articleDTO.getCategory());
+        if (articleDTO.getCategory() != null) article.setCategory(resolveCategory(articleDTO.getCategory()));
         if (articleDTO.getFeatured() != null) article.setFeatured(articleDTO.getFeatured());
+        if (articleDTO.getPublishToFacebook() != null) article.setPublishToFacebook(articleDTO.getPublishToFacebook());
+        if (articleDTO.getFacebookContent() != null) article.setFacebookContent(articleDTO.getFacebookContent());
 
         if (articleDTO.getStatus() != null) {
             if (articleDTO.getStatus() == ArticleStatus.PUBLISHED && article.getStatus() != ArticleStatus.PUBLISHED) {
@@ -190,7 +212,7 @@ public class ArticleService {
         boolean vientDEtrePublie = ancienStatut != ArticleStatus.PUBLISHED
                 && saved.getStatus() == ArticleStatus.PUBLISHED;
 
-        if (vientDEtrePublie) {
+        if (vientDEtrePublie && Boolean.TRUE.equals(saved.getPublishToFacebook())) {
 //            eventPublisher.publishEvent(new ArticlePublishedEvent(saved));
             Article articleAvecImages = articleRepository
                     .findWithFacebookImagesById(saved.getId())
@@ -198,11 +220,28 @@ public class ArticleService {
             eventPublisher.publishEvent(new ArticlePublishedEvent(articleAvecImages));
         }
 
-        return convertToDTO(saved);
+        return convertToResponse(saved);
+    }
+
+    /**
+     * Force la publication d'un article sur Facebook, indépendamment de son statut.
+     * Utilise le contenu Facebook spécifique s'il est renseigné.
+     */
+    @Transactional
+    public ArticleResponse publishOnFacebook(UUID id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Article", "id", id));
+
+        Article articleAvecImages = articleRepository
+                .findWithFacebookImagesById(id)
+                .orElse(article);
+
+        eventPublisher.publishEvent(new ArticlePublishedEvent(articleAvecImages));
+        return convertToResponse(article);
     }
 
     @Transactional
-    public void deleteArticle(Long id) {
+    public void deleteArticle(UUID id) {
         if (!articleRepository.existsById(id)) {
             throw new ResourceNotFoundException("Article", "id", id);
         }
@@ -213,32 +252,36 @@ public class ArticleService {
         return articleRepository.countByStatus(ArticleStatus.PUBLISHED);
     }
 
-    private ArticleDTO convertToDTO(Article article) {
+    private ArticleResponse convertToResponse(Article article) {
 
-        List<ArticleImageDTO> images = article.getImages()
+        List<ArticleImageResponse> images = article.getImages()
                 .stream()
-                .map(img -> ArticleImageDTO.builder()
+                .map(img -> ArticleImageResponse.builder()
                         .id(img.getId())
                         .imageUrl(img.getImageUrl())
                         .build())
                 .toList();
-        List<FacebookImageDTO> imagesFacebook = article.getImagesFacebook()
+        List<FacebookImageResponse> imagesFacebook = article.getImagesFacebook()
                 .stream()
-                .map(img -> FacebookImageDTO.builder()
+                .map(img -> FacebookImageResponse.builder()
                         .id(img.getId())
                         .imageUrl(img.getImageUrl())
                         .build())
                 .toList();
-        return ArticleDTO.builder()
+        return ArticleResponse.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .summary(article.getSummary())
                 .content(article.getContent())
                 .featuredImage(article.getFeaturedImage())
-                .category(article.getCategory())
+                .category(article.getCategory() != null ? article.getCategory().getCode() : null)
+                .categoryLabel(article.getCategory() != null ? article.getCategory().getLabel() : null)
+                .categoryId(article.getCategory() != null ? article.getCategory().getId() : null)
                 .status(article.getStatus())
                 .viewCount(article.getViewCount())
                 .featured(article.getFeatured())
+                .publishToFacebook(article.getPublishToFacebook())
+                .facebookContent(article.getFacebookContent())
                 .authorName(article.getAuthor().getFirstName() + " " + article.getAuthor().getLastName())
                 .authorId(article.getAuthor().getId())
                 .publishedAt(article.getPublishedAt())

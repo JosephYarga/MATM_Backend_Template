@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.repository;
+import java.util.UUID;
 
 import bf.gov.mtdpce.entity.JobOffer;
 import bf.gov.mtdpce.entity.JobOfferStatus;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface JobOfferRepository extends JpaRepository<JobOffer, Long> {
+public interface JobOfferRepository extends JpaRepository<JobOffer, UUID> {
     
     Page<JobOffer> findByIsPublishedTrueAndStatusOrderByCreatedAtDesc(JobOfferStatus status, Pageable pageable);
     
@@ -28,11 +29,11 @@ public interface JobOfferRepository extends JpaRepository<JobOffer, Long> {
     
     @Modifying
     @Query("UPDATE JobOffer j SET j.viewCount = j.viewCount + 1 WHERE j.id = :id")
-    void incrementViewCount(Long id);
+    void incrementViewCount(UUID id);
     
     @Modifying
     @Query("UPDATE JobOffer j SET j.applicationCount = j.applicationCount + 1 WHERE j.id = :id")
-    void incrementApplicationCount(Long id);
+    void incrementApplicationCount(UUID id);
     
     long countByIsPublishedTrueAndStatus(JobOfferStatus status);
     

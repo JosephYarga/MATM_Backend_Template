@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.controller;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
 import bf.gov.mtdpce.dto.request.FlashInfoRequest;
@@ -31,13 +32,20 @@ public class FlashInfoController {
     
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail d'un flash info")
-    public ResponseEntity<FlashInfoResponse> getFlashInfoById(@PathVariable Long id) {
+    public ResponseEntity<FlashInfoResponse> getFlashInfoById(@PathVariable UUID id) {
         return ResponseEntity.ok(flashInfoService.getFlashInfoById(id));
     }
     
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
+    @Operation(summary = "Liste complète des flash infos, actives et inactives (admin)")
+    public ResponseEntity<List<FlashInfoResponse>> getAllFlashInfosList() {
+        return ResponseEntity.ok(flashInfoService.getAllFlashInfosList());
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
-    @Operation(summary = "Liste de tous les flash infos (admin)")
+    @Operation(summary = "Liste paginée des flash infos actives (admin)")
     public ResponseEntity<PaginatedResponse<FlashInfoResponse>> getAllFlashInfos(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -55,7 +63,7 @@ public class FlashInfoController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR')")
     @Operation(summary = "Modifier un flash info")
     public ResponseEntity<FlashInfoResponse> updateFlashInfo(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody FlashInfoRequest request) {
         return ResponseEntity.ok(flashInfoService.updateFlashInfo(id, request));
     }
@@ -63,7 +71,7 @@ public class FlashInfoController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Supprimer un flash info")
-    public ResponseEntity<ApiResponse> deleteFlashInfo(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> deleteFlashInfo(@PathVariable UUID id) {
         flashInfoService.deleteFlashInfo(id);
         return ResponseEntity.ok(new ApiResponse(true, "Flash info supprimé avec succès"));
     }

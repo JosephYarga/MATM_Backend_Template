@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.entity;
+import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,8 +13,8 @@ import java.util.Set;
 public class StructureRattache {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(length = 255)
     private String name;

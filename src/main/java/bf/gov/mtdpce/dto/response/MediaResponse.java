@@ -1,17 +1,18 @@
 package bf.gov.mtdpce.dto.response;
+import java.util.UUID;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class MediaResponse {
     
-    private Long id;
+    private UUID id;
     private String title;
     private String description;
     private String fileUrl;
     private String thumbnailUrl;
     private String mediaType;
-    private Long albumId;
+    private UUID albumId;
     private String albumName;
     private String category;
     private List<String> tags;
@@ -29,8 +30,8 @@ public class MediaResponse {
     private String createdBy;
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
     
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -47,8 +48,8 @@ public class MediaResponse {
     public String getMediaType() { return mediaType; }
     public void setMediaType(String mediaType) { this.mediaType = mediaType; }
     
-    public Long getAlbumId() { return albumId; }
-    public void setAlbumId(Long albumId) { this.albumId = albumId; }
+    public UUID getAlbumId() { return albumId; }
+    public void setAlbumId(UUID albumId) { this.albumId = albumId; }
     
     public String getAlbumName() { return albumName; }
     public void setAlbumName(String albumName) { this.albumName = albumName; }

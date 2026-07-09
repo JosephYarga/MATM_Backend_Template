@@ -1,7 +1,10 @@
 package bf.gov.mtdpce.service;
+import bf.gov.mtdpce.exception.ResourceNotFoundException;
+import java.util.UUID;
 
 import bf.gov.mtdpce.repository.MinistreRepository;
-import bf.gov.mtdpce.dto.MinistreDTO;
+import bf.gov.mtdpce.dto.request.MinistreRequest;
+import bf.gov.mtdpce.dto.response.MinistreResponse;
 import bf.gov.mtdpce.entity.Ministere;
 import bf.gov.mtdpce.entity.Ministre;
 import bf.gov.mtdpce.repository.MinistereRepository;
@@ -21,105 +24,117 @@ public class MinistreService {
     @Autowired
     private MinistereRepository ministereRepository;
 
-    public Page<MinistreDTO> getAll(Pageable pageable) {
+    public Page<MinistreResponse> getAll(Pageable pageable) {
         return ministreRepository.findAll(pageable)
-                .map(this::convertToDTO);
+                .map(this::convertToResponse);
     }
 
-    public Page<MinistreDTO> getByMinistere(Long ministereId, Pageable pageable) {
+    public Page<MinistreResponse> getByMinistere(UUID ministereId, Pageable pageable) {
         return ministreRepository.findByMinistereId(ministereId, pageable)
-                .map(this::convertToDTO);
+                .map(this::convertToResponse);
     }
 
-    public MinistreDTO getById(Long id) {
+    /** Anciens ministres (non en fonction), paginés côté serveur. */
+    public Page<MinistreResponse> getFormerMinisters(Pageable pageable) {
+        return ministreRepository.findFormerMinisters(pageable)
+                .map(this::convertToResponse);
+    }
+
+    public MinistreResponse getById(UUID id) {
         Ministre ministre = ministreRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ministre non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ministre non trouvé"));
 
-        return convertToDTO(ministre);
+        return convertToResponse(ministre);
     }
 
-    public MinistreDTO create(MinistreDTO dto) {
+    public MinistreResponse create(MinistreRequest request) {
 
-        Ministere ministere = ministereRepository.findById(dto.getMinistereId())
-                .orElseThrow(() -> new RuntimeException("Ministère non trouvé"));
+        Ministere ministere = ministereRepository.findById(request.getMinistereId())
+                .orElseThrow(() -> new ResourceNotFoundException("Ministère non trouvé"));
 
-        if (Boolean.TRUE.equals(dto.getIsActif())) {
-            desactiverMinistreActuel();
+        if (Boolean.TRUE.equals(request.getIsActif())) {
+            desactiverAutresMinistres(null);
         }
 
         Ministre ministre = new Ministre();
-        ministre.setNom(dto.getNom());
-        ministre.setPrenom(dto.getPrenom());
-        ministre.setProfession(dto.getProfession());
-        ministre.setBiographie(dto.getBiographie());
-        ministre.setContent(dto.getContent());
-        ministre.setPhoto(dto.getPhoto());
-        ministre.setIsActif(dto.getIsActif());
+        ministre.setNom(request.getNom());
+        ministre.setPrenom(request.getPrenom());
+        ministre.setProfession(request.getProfession());
+        ministre.setBiographie(request.getBiographie());
+        ministre.setContent(request.getContent());
+        ministre.setPhoto(request.getPhoto());
+        ministre.setIsActif(request.getIsActif());
         ministre.setMinistere(ministere);
-        ministre.setDateDebut(dto.getDateDebut());
-        ministre.setDateFin(dto.getDateFin());
+        ministre.setDateDebut(request.getDateDebut());
+        ministre.setDateFin(request.getDateFin());
 
-        return convertToDTO(ministreRepository.save(ministre));
+        return convertToResponse(ministreRepository.save(ministre));
     }
 
-    public MinistreDTO update(Long id, MinistreDTO dto) {
+    public MinistreResponse update(UUID id, MinistreRequest request) {
 
         Ministre ministre = ministreRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ministre non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ministre non trouvé"));
 
-        Ministere ministere = ministereRepository.findById(dto.getMinistereId())
-                .orElseThrow(() -> new RuntimeException("Ministère non trouvé"));
+        Ministere ministere = ministereRepository.findById(request.getMinistereId())
+                .orElseThrow(() -> new ResourceNotFoundException("Ministère non trouvé"));
 
-        if (Boolean.TRUE.equals(dto.getIsActif())) {
-            desactiverMinistreActuel();
+        if (Boolean.TRUE.equals(request.getIsActif())) {
+            desactiverAutresMinistres(id);
         }
 
-        ministre.setNom(dto.getNom());
-        ministre.setPrenom(dto.getPrenom());
-        ministre.setProfession(dto.getProfession());
-        ministre.setBiographie(dto.getBiographie());
-        ministre.setContent(dto.getContent());
-        ministre.setPhoto(dto.getPhoto());
-        ministre.setDateDebut(dto.getDateDebut());
-        ministre.setDateFin(dto.getDateFin());
-        ministre.setIsActif(dto.getIsActif());
+        ministre.setNom(request.getNom());
+        ministre.setPrenom(request.getPrenom());
+        ministre.setProfession(request.getProfession());
+        ministre.setBiographie(request.getBiographie());
+        ministre.setContent(request.getContent());
+        ministre.setPhoto(request.getPhoto());
+        ministre.setDateDebut(request.getDateDebut());
+        ministre.setDateFin(request.getDateFin());
+        ministre.setIsActif(request.getIsActif());
         ministre.setMinistere(ministere);
 
-        return convertToDTO(ministreRepository.save(ministre));
+        return convertToResponse(ministreRepository.save(ministre));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
 
         Ministre ministre = ministreRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ministre non trouvé"));
+                .orElseThrow(() -> new ResourceNotFoundException("Ministre non trouvé"));
 
         ministreRepository.delete(ministre);
     }
 
-    private void desactiverMinistreActuel() {
-        ministreRepository.findByIsActifTrue().ifPresent(ministre -> {
-            ministre.setIsActif(false);
-            ministreRepository.save(ministre);
-        });
+    /**
+     * Garantit qu'un seul ministre est actif : désactive tous les ministres actifs,
+     * en conservant éventuellement celui dont l'id est passé (le ministre en cours d'édition).
+     */
+    private void desactiverAutresMinistres(UUID exceptId) {
+        for (Ministre ministre : ministreRepository.findAllByIsActifTrue()) {
+            if (exceptId == null || !ministre.getId().equals(exceptId)) {
+                ministre.setIsActif(false);
+                ministreRepository.save(ministre);
+            }
+        }
     }
 
-    private MinistreDTO convertToDTO(Ministre ministre) {
+    private MinistreResponse convertToResponse(Ministre ministre) {
 
-        MinistreDTO dto = new MinistreDTO();
-        dto.setId(ministre.getId());
-        dto.setNom(ministre.getNom());
-        dto.setPrenom(ministre.getPrenom());
-        dto.setProfession(ministre.getProfession());
-        dto.setBiographie(ministre.getBiographie());
-        dto.setContent(ministre.getContent());
-        dto.setPhoto(ministre.getPhoto());
-        dto.setIsActif(ministre.getIsActif());
-        dto.setMinistereId(ministre.getMinistere().getId());
-        dto.setDateDebut(ministre.getDateDebut());
-        dto.setDateFin(ministre.getDateFin());
-        dto.setCreatedAt(ministre.getCreatedAt());
-        dto.setUpdatedAt(ministre.getUpdatedAt());
+        MinistreResponse response = new MinistreResponse();
+        response.setId(ministre.getId());
+        response.setNom(ministre.getNom());
+        response.setPrenom(ministre.getPrenom());
+        response.setProfession(ministre.getProfession());
+        response.setBiographie(ministre.getBiographie());
+        response.setContent(ministre.getContent());
+        response.setPhoto(ministre.getPhoto());
+        response.setIsActif(ministre.getIsActif());
+        response.setMinistereId(ministre.getMinistere().getId());
+        response.setDateDebut(ministre.getDateDebut());
+        response.setDateFin(ministre.getDateFin());
+        response.setCreatedAt(ministre.getCreatedAt());
+        response.setUpdatedAt(ministre.getUpdatedAt());
 
-        return dto;
+        return response;
     }
 }

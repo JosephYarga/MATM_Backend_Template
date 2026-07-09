@@ -1,6 +1,8 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
-import bf.gov.mtdpce.dto.ProjetCategorieDTO;
+import bf.gov.mtdpce.dto.request.ProjetCategorieRequest;
+import bf.gov.mtdpce.dto.response.ProjetCategorieResponse;
 import bf.gov.mtdpce.entity.ProjetCategorie;
 import bf.gov.mtdpce.exception.BadRequestException;
 import bf.gov.mtdpce.exception.ResourceNotFoundException;
@@ -19,7 +21,7 @@ public class ProjetCategorieService {
     }
 
 
-    public ProjetCategorieDTO create(ProjetCategorieDTO dto) {
+    public ProjetCategorieResponse create(ProjetCategorieRequest dto) {
 
         if (projetCategorieRepository.existsByName(dto.getName())) {
             throw new BadRequestException("Cette catégorie existe déjà");
@@ -30,10 +32,10 @@ public class ProjetCategorieService {
                 .description(dto.getDescription())
                 .build();
 
-        return mapToDTO(projetCategorieRepository.save(projetCategorie));
+        return mapToResponse(projetCategorieRepository.save(projetCategorie));
     }
 
-    public ProjetCategorieDTO update(Long id, ProjetCategorieDTO dto) {
+    public ProjetCategorieResponse update(UUID id, ProjetCategorieRequest dto) {
 
         ProjetCategorie projetCategorie = projetCategorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorie", "id", id));
@@ -46,25 +48,25 @@ public class ProjetCategorieService {
         projetCategorie.setName(dto.getName());
         projetCategorie.setDescription(dto.getDescription());
 
-        return mapToDTO(projetCategorieRepository.save(projetCategorie));
+        return mapToResponse(projetCategorieRepository.save(projetCategorie));
     }
 
-    public ProjetCategorieDTO getById(Long id) {
+    public ProjetCategorieResponse getById(UUID id) {
 
         ProjetCategorie projetCategorie = projetCategorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorie", "id", id));
 
-        return mapToDTO(projetCategorie);
+        return mapToResponse(projetCategorie);
     }
 
-    public List<ProjetCategorieDTO> getAll() {
+    public List<ProjetCategorieResponse> getAll() {
         return projetCategorieRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
+                .map(this::mapToResponse)
                 .toList();
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
 
         ProjetCategorie projetCategorie = projetCategorieRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categorie", "id", id));
@@ -72,8 +74,8 @@ public class ProjetCategorieService {
         projetCategorieRepository.delete(projetCategorie);
     }
 
-    private ProjetCategorieDTO mapToDTO(ProjetCategorie projetCategorie) {
-        return ProjetCategorieDTO.builder()
+    private ProjetCategorieResponse mapToResponse(ProjetCategorie projetCategorie) {
+        return ProjetCategorieResponse.builder()
                 .id(projetCategorie.getId())
                 .name(projetCategorie.getName())
                 .description(projetCategorie.getDescription())

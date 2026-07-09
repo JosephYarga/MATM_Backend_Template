@@ -1,7 +1,9 @@
 package bf.gov.mtdpce.controller;
+import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.DomaineDTO;
+import bf.gov.mtdpce.dto.request.DomaineRequest;
+import bf.gov.mtdpce.dto.response.DomaineResponse;
 import bf.gov.mtdpce.service.DomaineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +26,7 @@ public class DomaineController {
 
     @GetMapping
     @Operation(summary = "Liste des domaines")
-    public ResponseEntity<ApiResponse<Page<DomaineDTO>>> getAllDomaines(
+    public ResponseEntity<ApiResponse<Page<DomaineResponse>>> getAllDomaines(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nom") String sortBy,
@@ -43,7 +45,7 @@ public class DomaineController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'un domaine")
-    public ResponseEntity<ApiResponse<DomaineDTO>> getDomaineById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<DomaineResponse>> getDomaineById(@PathVariable UUID id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(domaineService.getById(id))
@@ -53,7 +55,7 @@ public class DomaineController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un domaine")
-    public ResponseEntity<DomaineDTO> createDomaine(@RequestBody DomaineDTO domaineDTO) {
+    public ResponseEntity<DomaineResponse> createDomaine(@RequestBody DomaineRequest domaineDTO) {
 
         return ResponseEntity.ok(domaineService.create(domaineDTO));
     }
@@ -61,9 +63,9 @@ public class DomaineController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un domaine")
-    public ResponseEntity<DomaineDTO> updateDomaine(
-            @PathVariable Long id,
-            @RequestBody DomaineDTO domaineDTO) {
+    public ResponseEntity<DomaineResponse> updateDomaine(
+            @PathVariable UUID id,
+            @RequestBody DomaineRequest domaineDTO) {
 
         return ResponseEntity.ok(domaineService.update(id, domaineDTO));
     }
@@ -71,7 +73,7 @@ public class DomaineController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un domaine")
-    public ResponseEntity<ApiResponse<Void>> deleteDomaine(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteDomaine(@PathVariable UUID id) {
 
         domaineService.delete(id);
 

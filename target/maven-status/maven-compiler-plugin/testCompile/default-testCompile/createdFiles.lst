@@ -1,0 +1,11 @@
+bf/gov/mtdpce/exception/GlobalExceptionHandlerUnitTest.class
+bf/gov/mtdpce/ExplicitMessageIntegrationTest.class
+bf/gov/mtdpce/ExceptionHandlingIntegrationTest.class
+bf/gov/mtdpce/service/DomaineServiceTest.class
+bf/gov/mtdpce/MtdpceApplicationTests.class
+bf/gov/mtdpce/SearchIntegrationTest.class
+bf/gov/mtdpce/SecurityAndRoleHierarchyIntegrationTest.class
+bf/gov/mtdpce/AuthControllerIntegrationTest.class
+bf/gov/mtdpce/ImprovementsIntegrationTest.class
+bf/gov/mtdpce/AbstractIntegrationTest.class
+bf/gov/mtdpce/PublicEndpointsIntegrationTest.class

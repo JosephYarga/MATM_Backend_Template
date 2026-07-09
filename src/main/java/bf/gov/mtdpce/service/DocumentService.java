@@ -1,6 +1,8 @@
 package bf.gov.mtdpce.service;
+import java.util.UUID;
 
-import bf.gov.mtdpce.dto.DocumentDTO;
+import bf.gov.mtdpce.dto.request.DocumentRequest;
+import bf.gov.mtdpce.dto.response.DocumentResponse;
 import bf.gov.mtdpce.entity.Document;
 import bf.gov.mtdpce.entity.DocumentCategory;
 import bf.gov.mtdpce.entity.Type;
@@ -30,37 +32,60 @@ public class DocumentService {
     @Autowired
     private TypeRepository typeRepository;
 
-    public Page<DocumentDTO> getAllDocuments(Pageable pageable) {
-        return documentRepository.findAll(pageable).map(this::convertToDTO);
+    public Page<DocumentResponse> getAllDocuments(Pageable pageable) {
+        return documentRepository.findAll(pageable).map(this::convertToResponse);
     }
 
-    public Page<DocumentDTO> getPublicDocuments(Pageable pageable) {
-        return documentRepository.findByIsPublicTrue(pageable).map(this::convertToDTO);
+    public Page<DocumentResponse> getPublicDocuments(Pageable pageable) {
+        return documentRepository.findByIsPublicTrue(pageable).map(this::convertToResponse);
     }
 
-    public Page<DocumentDTO> getDocumentsByCategory(DocumentCategory category, Pageable pageable) {
-        return documentRepository.findByCategory(category, pageable).map(this::convertToDTO);
+    /** Navigation paginée par type (Règlementation / Stratégie) + facettes par catégorie. */
+    public bf.gov.mtdpce.dto.response.DocumentBrowseResponse browsePublic(
+            String typeDocument, DocumentCategory category, String query, Pageable pageable) {
+
+        String q = (query != null && !query.isBlank()) ? query.trim() : "";
+        Page<Document> page = documentRepository.browsePublic(typeDocument, category, q, pageable);
+
+        java.util.Map<String, Long> facets = new java.util.LinkedHashMap<>();
+        for (Object[] row : documentRepository.countByCategoryForType(typeDocument, q)) {
+            DocumentCategory c = (DocumentCategory) row[0];
+            facets.put(c != null ? c.name() : "AUTRE", (Long) row[1]);
+        }
+
+        return bf.gov.mtdpce.dto.response.DocumentBrowseResponse.builder()
+                .content(page.getContent().stream().map(this::convertToResponse).collect(Collectors.toList()))
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .number(page.getNumber())
+                .size(page.getSize())
+                .facets(facets)
+                .build();
     }
 
-    public Page<DocumentDTO> searchPublicDocuments(String search, Pageable pageable) {
-        return documentRepository.searchPublicDocuments(search, pageable).map(this::convertToDTO);
+    public Page<DocumentResponse> getDocumentsByCategory(DocumentCategory category, Pageable pageable) {
+        return documentRepository.findByCategory(category, pageable).map(this::convertToResponse);
     }
 
-    public List<DocumentDTO> getLatestPublicDocuments() {
+    public Page<DocumentResponse> searchPublicDocuments(String search, Pageable pageable) {
+        return documentRepository.searchPublicDocuments(search, pageable).map(this::convertToResponse);
+    }
+
+    public List<DocumentResponse> getLatestPublicDocuments() {
         return documentRepository.findTop10ByIsPublicTrueOrderByCreatedAtDesc()
                 .stream()
-                .map(this::convertToDTO)
+                .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
 
-    public DocumentDTO getDocumentById(Long id) {
+    public DocumentResponse getDocumentById(UUID id) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document", "id", id));
-        return convertToDTO(document);
+        return convertToResponse(document);
     }
 
     @Transactional
-    public DocumentDTO createDocument(DocumentDTO documentDTO, Long uploadedById) {
+    public DocumentResponse createDocument(DocumentRequest documentDTO, UUID uploadedById) {
         User uploadedBy = userRepository.findById(uploadedById)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", uploadedById));
         Type type = typeRepository.findById(documentDTO.getTypeId())
@@ -80,11 +105,11 @@ public class DocumentService {
                 .type(type)
                 .build();
 
-        return convertToDTO(documentRepository.save(document));
+        return convertToResponse(documentRepository.save(document));
     }
 
     @Transactional
-    public DocumentDTO updateDocument(Long id, DocumentDTO documentDTO) {
+    public DocumentResponse updateDocument(UUID id, DocumentRequest documentDTO) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document", "id", id));
 
@@ -102,11 +127,11 @@ public class DocumentService {
         if (documentDTO.getCategory() != null) document.setCategory(documentDTO.getCategory());
         if (documentDTO.getIsPublic() != null) document.setIsPublic(documentDTO.getIsPublic());
 
-        return convertToDTO(documentRepository.save(document));
+        return convertToResponse(documentRepository.save(document));
     }
 
     @Transactional
-    public void incrementDownloadCount(Long id) {
+    public void incrementDownloadCount(UUID id) {
         Document document = documentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document", "id", id));
         document.setDownloadCount(document.getDownloadCount() + 1);
@@ -114,7 +139,7 @@ public class DocumentService {
     }
 
     @Transactional
-    public void deleteDocument(Long id) {
+    public void deleteDocument(UUID id) {
         if (!documentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Document", "id", id);
         }
@@ -125,8 +150,8 @@ public class DocumentService {
         return documentRepository.countPublicDocuments();
     }
 
-    private DocumentDTO convertToDTO(Document document) {
-        return DocumentDTO.builder()
+    private DocumentResponse convertToResponse(Document document) {
+        return DocumentResponse.builder()
                 .id(document.getId())
                 .title(document.getTitle())
                 .description(document.getDescription())

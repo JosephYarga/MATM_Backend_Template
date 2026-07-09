@@ -1,4 +1,5 @@
 package bf.gov.mtdpce.repository;
+import java.util.UUID;
 
 import bf.gov.mtdpce.entity.FAQ;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface FAQRepository extends JpaRepository<FAQ, Long> {
+public interface FAQRepository extends JpaRepository<FAQ, UUID> {
     
     Page<FAQ> findByIsPublishedTrueOrderByDisplayOrderAsc(Pageable pageable);
     
@@ -27,15 +28,15 @@ public interface FAQRepository extends JpaRepository<FAQ, Long> {
     
     @Modifying
     @Query("UPDATE FAQ f SET f.viewCount = f.viewCount + 1 WHERE f.id = :id")
-    void incrementViewCount(Long id);
+    void incrementViewCount(UUID id);
     
     @Modifying
     @Query("UPDATE FAQ f SET f.helpfulCount = f.helpfulCount + 1 WHERE f.id = :id")
-    void incrementHelpfulCount(Long id);
+    void incrementHelpfulCount(UUID id);
     
     @Modifying
     @Query("UPDATE FAQ f SET f.notHelpfulCount = f.notHelpfulCount + 1 WHERE f.id = :id")
-    void incrementNotHelpfulCount(Long id);
+    void incrementNotHelpfulCount(UUID id);
     
     long countByIsPublishedTrue();
 }
