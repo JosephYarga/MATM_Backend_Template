@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.EService;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EServiceRepository extends JpaRepository<EService, UUID> {
+public interface EServiceRepository extends JpaRepository<EService, Long> {
     
     Page<EService> findByIsActiveTrueOrderByDisplayOrderAsc(Pageable pageable);
     
@@ -30,11 +29,11 @@ public interface EServiceRepository extends JpaRepository<EService, UUID> {
     
     @Modifying
     @Query("UPDATE EService e SET e.viewCount = e.viewCount + 1 WHERE e.id = :id")
-    void incrementViewCount(UUID id);
+    void incrementViewCount(Long id);
     
     @Modifying
     @Query("UPDATE EService e SET e.requestCount = e.requestCount + 1 WHERE e.id = :id")
-    void incrementRequestCount(UUID id);
+    void incrementRequestCount(Long id);
     
     long countByIsActiveTrue();
     

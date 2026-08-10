@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.entity;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,8 +12,8 @@ import lombok.*;
 @Builder
 public class FacebookImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false)
     private String imageUrl;

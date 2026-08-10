@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.security;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,7 +20,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private UUID id;
+    private Long id;
     private String username;
     private String email;
     private String firstName;

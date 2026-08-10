@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.entity;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,8 +13,8 @@ import lombok.*;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true, length = 50)

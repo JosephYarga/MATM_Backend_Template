@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.NewsletterSubscription;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NewsletterSubscriptionRepository extends JpaRepository<NewsletterSubscription, UUID> {
+public interface NewsletterSubscriptionRepository extends JpaRepository<NewsletterSubscription, Long> {
     
     Optional<NewsletterSubscription> findByEmail(String email);
     

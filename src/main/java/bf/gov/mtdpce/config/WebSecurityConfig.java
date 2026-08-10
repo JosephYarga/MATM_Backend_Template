@@ -4,8 +4,6 @@ import bf.gov.mtdpce.security.AuthEntryPointJwt;
 import bf.gov.mtdpce.security.AuthTokenFilter;
 import bf.gov.mtdpce.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,18 +15,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 
@@ -69,49 +61,13 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // Hiérarchie des rôles : un rôle supérieur hérite des autorisations des rôles inférieurs.
-    // Indispensable pour que ROLE_SUPER_ADMIN puisse accéder aux endpoints @PreAuthorize("hasRole('ADMIN')") etc.
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-        RoleHierarchyImpl hierarchy = new RoleHierarchyImpl();
-        hierarchy.setHierarchy(
-                "ROLE_SUPER_ADMIN > ROLE_ADMIN\n" +
-                "ROLE_ADMIN > ROLE_MODERATOR\n" +
-                "ROLE_MODERATOR > ROLE_USER"
-        );
-        return hierarchy;
-    }
-
-    // Branche la hiérarchie de rôles sur la sécurité au niveau des méthodes (@PreAuthorize).
-    @Bean
-    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(RoleHierarchy roleHierarchy) {
-        DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-        handler.setRoleHierarchy(roleHierarchy);
-        return handler;
-    }
-
     // WebSecurityConfig.java — activer cors() avec le bean CorsConfigurationSource
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                // .cors(cors -> cors.disable())
                 .csrf(csrf -> csrf.disable())
-                // En-têtes de sécurité HTTP (anti-clickjacking, HSTS, referrer, permissions).
-                .headers(headers -> headers
-                        // Empêche l'inclusion du site dans une iframe (clickjacking).
-                        .frameOptions(frame -> frame.deny())
-                        .contentSecurityPolicy(csp -> csp.policyDirectives(
-                                "frame-ancestors 'none'; object-src 'none'; base-uri 'self'"))
-                        // Force HTTPS pendant 1 an (appliqué uniquement sur les réponses HTTPS).
-                        .httpStrictTransportSecurity(hsts -> hsts
-                                .includeSubDomains(true)
-                                .maxAgeInSeconds(31536000))
-                        .referrerPolicy(ref -> ref.policy(
-                                ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                        // Désactive les API navigateur sensibles par défaut.
-                        .addHeaderWriter(new StaticHeadersWriter("Permissions-Policy",
-                                "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"))
-                )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -148,16 +104,9 @@ public class WebSecurityConfig {
                                 "/api/v1/events/public/**",
                                 "/api/v1/faqs/public/**",
                                 "/api/v1/services/public/**",
-                                "/api/v1/documents/public/**",
                                 "/api/v1/flash-infos/public/**",
-                                "/api/v1/banners/public/**",
-                                "/api/v1/conseils/public/**",
-                                "/api/v1/ticker-config/public/**",
                                 "/api/v1/newsletter/public/**",
-                                "/api/v1/analytics/track",
-                                "/api/v1/health",
-                                "/uploads/**",
-                                "/sitemap.xml"
+                                "/uploads/**"
                         ).permitAll()
 
                         // Tout le reste nécessite une authentification
@@ -166,19 +115,8 @@ public class WebSecurityConfig {
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        // Anti-spam sur les formulaires publics (contact, newsletter).
-        http.addFilterBefore(new bf.gov.mtdpce.security.RateLimitingFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    /**
-     * Masque l'en-tête HTTP « Server » (n'expose plus la version de Tomcat/Coyote).
-     */
-    @Bean
-    public WebServerFactoryCustomizer<TomcatServletWebServerFactory> hideServerHeaderCustomizer() {
-        return factory -> factory.addConnectorCustomizers(
-                connector -> connector.setProperty("server", " "));
     }
 
     @Bean

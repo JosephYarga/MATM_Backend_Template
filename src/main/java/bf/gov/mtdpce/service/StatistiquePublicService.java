@@ -1,10 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.ResourceNotFoundException;
-import bf.gov.mtdpce.exception.BadRequestException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.StatistiquePublicRequest;
-import bf.gov.mtdpce.dto.response.StatistiquePublicResponse;
+import bf.gov.mtdpce.dto.StatistiquePublicDTO;
 import bf.gov.mtdpce.entity.StatistiquePublic;
 import bf.gov.mtdpce.repository.StatistiquePublicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,60 +16,60 @@ public class StatistiquePublicService {
     @Autowired
     private StatistiquePublicRepository statistiqueRepository;
 
-    public Page<StatistiquePublicResponse> getAll(Pageable pageable) {
+    public Page<StatistiquePublicDTO> getAll(Pageable pageable) {
         return statistiqueRepository.findAll(pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public StatistiquePublicResponse getById(UUID id) {
+    public StatistiquePublicDTO getById(Long id) {
 
         StatistiquePublic statistique = statistiqueRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Statistique non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Statistique non trouvée"));
 
-        return convertToResponse(statistique);
+        return convertToDTO(statistique);
     }
 
-    public StatistiquePublicResponse create(StatistiquePublicRequest dto) {
+    public StatistiquePublicDTO create(StatistiquePublicDTO dto) {
 
         if (statistiqueRepository.existsByNom(dto.getNom())) {
-            throw new BadRequestException("Une statistique avec ce nom existe déjà.");
+            throw new RuntimeException("Une statistique avec ce nom existe déjà.");
         }
 
         StatistiquePublic statistique = new StatistiquePublic();
         statistique.setNom(dto.getNom());
         statistique.setValeur(dto.getValeur());
 
-        return convertToResponse(statistiqueRepository.save(statistique));
+        return convertToDTO(statistiqueRepository.save(statistique));
     }
 
-    public StatistiquePublicResponse update(UUID id, StatistiquePublicRequest dto) {
+    public StatistiquePublicDTO update(Long id, StatistiquePublicDTO dto) {
 
         StatistiquePublic statistique = statistiqueRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Statistique non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Statistique non trouvée"));
 
         if (!statistique.getNom().equals(dto.getNom())
                 && statistiqueRepository.existsByNom(dto.getNom())) {
 
-            throw new BadRequestException("Une statistique avec ce nom existe déjà.");
+            throw new RuntimeException("Une statistique avec ce nom existe déjà.");
         }
 
         statistique.setNom(dto.getNom());
         statistique.setValeur(dto.getValeur());
 
-        return convertToResponse(statistiqueRepository.save(statistique));
+        return convertToDTO(statistiqueRepository.save(statistique));
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         StatistiquePublic statistique = statistiqueRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Statistique non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Statistique non trouvée"));
 
         statistiqueRepository.delete(statistique);
     }
 
-    private StatistiquePublicResponse convertToResponse(StatistiquePublic statistique) {
+    private StatistiquePublicDTO convertToDTO(StatistiquePublic statistique) {
 
-        StatistiquePublicResponse dto = new StatistiquePublicResponse();
+        StatistiquePublicDTO dto = new StatistiquePublicDTO();
         dto.setId(statistique.getId());
         dto.setNom(statistique.getNom());
         dto.setValeur(statistique.getValeur());

@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.dto.auth;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,7 @@ public class JwtResponse {
 
     private String token;
     private String type = "Bearer";
-    private UUID id;
+    private Long id;
     private String username;
     private String email;
     private String firstName;

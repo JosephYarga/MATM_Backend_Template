@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
 import bf.gov.mtdpce.dto.request.FlashInfoRequest;
 import bf.gov.mtdpce.dto.response.FlashInfoResponse;
@@ -32,13 +31,6 @@ public class FlashInfoService {
                 .collect(Collectors.toList());
     }
     
-    /** Toutes les flash infos (actives et inactives) pour l'administration. */
-    public List<FlashInfoResponse> getAllFlashInfosList() {
-        return flashInfoRepository.findAllByOrderByPriorityDescCreatedAtDesc().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
     public PaginatedResponse<FlashInfoResponse> getAllFlashInfos(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlashInfo> flashInfoPage = flashInfoRepository.findByIsActiveTrueOrderByPriorityDescCreatedAtDesc(pageable);
@@ -50,7 +42,7 @@ public class FlashInfoService {
         return new PaginatedResponse<>(flashInfos, page, size, flashInfoPage.getTotalElements());
     }
     
-    public FlashInfoResponse getFlashInfoById(UUID id) {
+    public FlashInfoResponse getFlashInfoById(Long id) {
         FlashInfo flashInfo = flashInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Flash info non trouvé avec l'id: " + id));
         return mapToResponse(flashInfo);
@@ -63,7 +55,7 @@ public class FlashInfoService {
         return mapToResponse(saved);
     }
     
-    public FlashInfoResponse updateFlashInfo(UUID id, FlashInfoRequest request) {
+    public FlashInfoResponse updateFlashInfo(Long id, FlashInfoRequest request) {
         FlashInfo flashInfo = flashInfoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Flash info non trouvé avec l'id: " + id));
         mapRequestToEntity(request, flashInfo);
@@ -71,7 +63,7 @@ public class FlashInfoService {
         return mapToResponse(updated);
     }
     
-    public void deleteFlashInfo(UUID id) {
+    public void deleteFlashInfo(Long id) {
         if (!flashInfoRepository.existsById(id)) {
             throw new ResourceNotFoundException("Flash info non trouvé avec l'id: " + id);
         }

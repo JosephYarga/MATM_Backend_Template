@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.dto.response;
-import java.util.UUID;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +17,7 @@ public class SearchResponse {
     private long searchDurationMs;
 
     public static class SearchResultItem {
-        private UUID id;
+        private Long id;
         private String type; // ARTICLE, PROJECT, DOCUMENT, EVENT, SERVICE, FAQ, JOB
         private String title;
         private String excerpt;
@@ -30,8 +29,8 @@ public class SearchResponse {
         private Map<String, String> highlights; // Field -> highlighted text
 
         // Getters and Setters
-        public UUID getId() { return id; }
-        public void setId(UUID id) { this.id = id; }
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
         
         public String getType() { return type; }
         public void setType(String type) { this.type = type; }

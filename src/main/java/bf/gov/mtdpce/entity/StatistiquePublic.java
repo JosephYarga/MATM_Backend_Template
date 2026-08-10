@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.entity;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,8 +8,8 @@ import lombok.Data;
 @Data
 public class StatistiquePublic {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String nom;

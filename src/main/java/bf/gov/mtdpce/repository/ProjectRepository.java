@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Project;
 import bf.gov.mtdpce.entity.ProjectStatus;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectRepository extends JpaRepository<Project, UUID> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findByStatus(ProjectStatus status, Pageable pageable);
 

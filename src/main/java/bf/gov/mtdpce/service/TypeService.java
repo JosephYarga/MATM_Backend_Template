@@ -1,8 +1,6 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.TypeRequest;
-import bf.gov.mtdpce.dto.response.TypeResponse;
+import bf.gov.mtdpce.dto.TypeDTO;
 import bf.gov.mtdpce.exception.BadRequestException;
 import bf.gov.mtdpce.exception.ResourceNotFoundException;
 import bf.gov.mtdpce.repository.TypeRepository;
@@ -19,7 +17,7 @@ public class TypeService {
         this.typeRepository = typeRepository;
     }
 
-    public TypeResponse create(TypeRequest dto) {
+    public TypeDTO create(TypeDTO dto) {
 
         if (typeRepository.existsByName(dto.getName())) {
             throw new BadRequestException("Ce type existe déjà");
@@ -30,10 +28,10 @@ public class TypeService {
                 .description(dto.getDescription())
                 .build();
 
-        return mapToResponse(typeRepository.save(type));
+        return mapToDTO(typeRepository.save(type));
     }
 
-    public TypeResponse update(UUID id, TypeRequest dto) {
+    public TypeDTO update(Long id, TypeDTO dto) {
 
         Type type = typeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Type", "id", id));
@@ -46,25 +44,25 @@ public class TypeService {
         type.setName(dto.getName());
         type.setDescription(dto.getDescription());
 
-        return mapToResponse(typeRepository.save(type));
+        return mapToDTO(typeRepository.save(type));
     }
 
-    public TypeResponse getById(UUID id) {
+    public TypeDTO getById(Long id) {
 
         Type type = typeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Type", "id", id));
 
-        return mapToResponse(type);
+        return mapToDTO(type);
     }
 
-    public List<TypeResponse> getAll() {
+    public List<TypeDTO> getAll() {
         return typeRepository.findAll()
                 .stream()
-                .map(this::mapToResponse)
+                .map(this::mapToDTO)
                 .toList();
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         Type type = typeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Type", "id", id));
@@ -72,8 +70,8 @@ public class TypeService {
         typeRepository.delete(type);
     }
 
-    private TypeResponse mapToResponse(Type type) {
-        return TypeResponse.builder()
+    private TypeDTO mapToDTO(Type type) {
+        return TypeDTO.builder()
                 .id(type.getId())
                 .name(type.getName())
                 .description(type.getDescription())

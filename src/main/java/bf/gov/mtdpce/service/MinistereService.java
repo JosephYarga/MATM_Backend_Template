@@ -1,10 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.ResourceNotFoundException;
-import bf.gov.mtdpce.exception.BadRequestException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.MinistereRequest;
-import bf.gov.mtdpce.dto.response.MinistereResponse;
+import bf.gov.mtdpce.dto.MinistereDTO;
 import bf.gov.mtdpce.entity.Ministere;
 import bf.gov.mtdpce.entity.User;
 import bf.gov.mtdpce.repository.MinistereRepository;
@@ -26,26 +22,26 @@ public class MinistereService {
     private UserRepository userRepository;
 
 
-    public Page<MinistereResponse> getAll(Pageable pageable) {
+    public Page<MinistereDTO> getAll(Pageable pageable) {
         return ministereRepository.findAll(pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public MinistereResponse getById(UUID id) {
+    public MinistereDTO getById(Long id) {
         Ministere ministere = ministereRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ministère non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Ministère non trouvé"));
 
-        return convertToResponse(ministere);
+        return convertToDTO(ministere);
     }
 
-    public MinistereResponse create(MinistereRequest dto, UUID authorId) {
+    public MinistereDTO create(MinistereDTO dto, Long authorId) {
 
         if (ministereRepository.existsByAcronyme(dto.getAcronyme())) {
-            throw new BadRequestException("Un ministère avec cet acronyme existe déjà.");
+            throw new RuntimeException("Un ministère avec cet acronyme existe déjà.");
         }
 
         User author = userRepository.findById(authorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Auteur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Auteur non trouvé"));
 
         Ministere ministere = new Ministere();
         ministere.setNomGeneral(dto.getNomGeneral());
@@ -59,26 +55,24 @@ public class MinistereService {
 
         Ministere saved = ministereRepository.save(ministere);
 
-        return convertToResponse(saved);
+        return convertToDTO(saved);
     }
 
-    public MinistereResponse update(UUID id, MinistereRequest ministereDTO) {
+    public MinistereDTO update(Long id, MinistereDTO ministereDTO) {
 
         Ministere ministere = ministereRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ministère non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Ministère non trouvé"));
 
         if (!ministere.getAcronyme().equals(ministereDTO.getAcronyme())
                 && ministereRepository.existsByAcronyme(ministereDTO.getAcronyme())) {
 
-            throw new BadRequestException("Un ministère avec cet acronyme existe déjà.");
+            throw new RuntimeException("Un ministère avec cet acronyme existe déjà.");
         }
 
         ministere.setNomGeneral(ministereDTO.getNomGeneral());
         ministere.setNomReel(ministereDTO.getNomReel());
         ministere.setAcronyme(ministereDTO.getAcronyme());
         ministere.setMissionGeneral(ministereDTO.getMissionGeneral());
-        ministere.setPresentationSynthetique(ministereDTO.getPresentationSynthetique());
-        ministere.setPresentationGlobale(ministereDTO.getPresentationGlobale());
 
         if (ministereDTO.getLogo() != null) {
             ministere.setLogo(ministereDTO.getLogo());
@@ -89,20 +83,20 @@ public class MinistereService {
 
         Ministere updated = ministereRepository.save(ministere);
 
-        return convertToResponse(updated);
+        return convertToDTO(updated);
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         Ministere ministere = ministereRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ministère non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Ministère non trouvé"));
 
         ministereRepository.delete(ministere);
     }
 
-    private MinistereResponse convertToResponse(Ministere ministere) {
+    private MinistereDTO convertToDTO(Ministere ministere) {
 
-        MinistereResponse dto = new MinistereResponse();
+        MinistereDTO dto = new MinistereDTO();
         dto.setId(ministere.getId());
         dto.setNomGeneral(ministere.getNomGeneral());
         dto.setNomReel(ministere.getNomReel());

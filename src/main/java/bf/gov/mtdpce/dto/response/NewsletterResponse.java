@@ -1,12 +1,11 @@
 package bf.gov.mtdpce.dto.response;
-import java.util.UUID;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class NewsletterResponse {
     
-    private UUID id;
+    private Long id;
     private String email;
     private String firstName;
     private String lastName;
@@ -21,8 +20,8 @@ public class NewsletterResponse {
     private String message;
 
     // Getters and Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

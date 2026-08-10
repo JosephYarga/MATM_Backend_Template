@@ -1,9 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.BadRequestException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.StructureRequest;
-import bf.gov.mtdpce.dto.response.StructureResponse;
+import bf.gov.mtdpce.dto.StructureDTO;
 import bf.gov.mtdpce.entity.*;
 import bf.gov.mtdpce.exception.ResourceNotFoundException;
 import bf.gov.mtdpce.repository.MinistereRepository;
@@ -28,19 +25,19 @@ public class StructureService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<StructureResponse> getAll(Pageable pageable) {
+    public Page<StructureDTO> getAll(Pageable pageable) {
         return structureRepository.findAll(pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public StructureResponse getById(UUID id) {
+    public StructureDTO getById(Long id) {
         Structure structure = structureRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Structure non trouvée"));
 
-        return convertToResponse(structure);
+        return convertToDTO(structure);
     }
 
-    public StructureResponse create(StructureRequest dto,UUID authorId) {
+    public StructureDTO create(StructureDTO dto,Long authorId) {
 
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", authorId));
@@ -50,7 +47,7 @@ public class StructureService {
 
         if (dto.getAcronym() != null &&
                 structureRepository.existsByAcronym(dto.getAcronym())) {
-            throw new BadRequestException("Une structure avec cet acronyme existe déjà.");
+            throw new RuntimeException("Une structure avec cet acronyme existe déjà.");
         }
 
         Structure structure = Structure.builder()
@@ -63,17 +60,17 @@ public class StructureService {
                   .photo(dto.getPhoto())
                   .acronym(dto.getAcronym())
                   .niveau(dto.getNiveau())
-                  .description(dto.getDescription())
-                  .parentId(dto.getParentId())
+                  .createdAt(dto.getCreatedAt())
+                  .updatedAt(dto.getUpdatedAt())
                   .build();
 
-        return convertToResponse(structureRepository.save(structure));
+        return convertToDTO(structureRepository.save(structure));
     }
 
-    public StructureResponse update(UUID id, StructureRequest dto) {
+    public StructureDTO update(Long id, StructureDTO dto) {
 
         Structure structure = structureRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Structure non trouvée"));
 
         Ministere ministere = ministereRepository.findById(dto.getMinistereId())
                 .orElseThrow(() -> new ResourceNotFoundException("Ministere", "id", dto.getMinistereId()));
@@ -84,7 +81,7 @@ public class StructureService {
                 !dto.getAcronym().equals(structure.getAcronym()) &&
                 structureRepository.existsByAcronym(dto.getAcronym())) {
 
-            throw new BadRequestException("Une structure avec cet acronyme existe déjà.");
+            throw new RuntimeException("Une structure avec cet acronyme existe déjà.");
         }
 
         if (dto.getEmail() != null) structure.setEmail(dto.getEmail());
@@ -96,29 +93,21 @@ public class StructureService {
         if (dto.getName() != null) structure.setName(dto.getName());
         if (dto.getAcronym()!= null) structure.setAcronym(dto.getAcronym());
         if (dto.getNiveau() != null) structure.setNiveau(dto.getNiveau());
-        if (dto.getDescription() != null) structure.setDescription(dto.getDescription());
 
-        // Parent : réglé de façon inconditionnelle (permet aussi de repasser en racine),
-        // avec garde contre l'auto-référence.
-        if (dto.getParentId() != null && dto.getParentId().equals(id)) {
-            throw new BadRequestException("Une structure ne peut pas être sa propre parente.");
-        }
-        structure.setParentId(dto.getParentId());
-
-        return convertToResponse(structureRepository.save(structure));
+        return convertToDTO(structureRepository.save(structure));
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         Structure structure = structureRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Structure non trouvée"));
 
         structureRepository.delete(structure);
     }
 
-    private StructureResponse convertToResponse(Structure structure) {
+    private StructureDTO convertToDTO(Structure structure) {
 
-        StructureResponse dto = new StructureResponse();
+        StructureDTO dto = new StructureDTO();
         dto.setId(structure.getId());
         dto.setTitle(structure.getTitle());
         dto.setName(structure.getName());
@@ -128,8 +117,6 @@ public class StructureService {
         dto.setEmail(structure.getEmail());
         dto.setAcronym(structure.getAcronym());
         dto.setNiveau(structure.getNiveau());
-        dto.setDescription(structure.getDescription());
-        dto.setParentId(structure.getParentId());
         dto.setPhoto(structure.getPhoto());
         dto.setStructureType(structure.getStructureType());
         dto.setCreatedAt(structure.getCreatedAt());

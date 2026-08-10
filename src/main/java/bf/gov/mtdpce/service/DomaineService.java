@@ -1,10 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.ResourceNotFoundException;
-import bf.gov.mtdpce.exception.BadRequestException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.DomaineRequest;
-import bf.gov.mtdpce.dto.response.DomaineResponse;
+import bf.gov.mtdpce.dto.DomaineDTO;
 import bf.gov.mtdpce.repository.DomaineRepository;
 import bf.gov.mtdpce.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +16,22 @@ public class DomaineService {
     @Autowired
     private DomaineRepository domaineRepository;
 
-    public Page<DomaineResponse> getAll(Pageable pageable) {
+    public Page<DomaineDTO> getAll(Pageable pageable) {
         return domaineRepository.findAll(pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public DomaineResponse getById(UUID id) {
+    public DomaineDTO getById(Long id) {
         Domaine domaine = domaineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Domaine non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Domaine non trouvé"));
 
-        return convertToResponse(domaine);
+        return convertToDTO(domaine);
     }
 
-    public DomaineResponse create(DomaineRequest dto) {
+    public DomaineDTO create(DomaineDTO dto) {
 
         if (domaineRepository.existsByNom(dto.getNom())) {
-            throw new BadRequestException("Un domaine avec ce nom existe déjà.");
+            throw new RuntimeException("Un domaine avec ce nom existe déjà.");
         }
 
         Domaine domaine = new Domaine();
@@ -43,41 +39,41 @@ public class DomaineService {
 
         Domaine saved = domaineRepository.save(domaine);
 
-        return convertToResponse(saved);
+        return convertToDTO(saved);
     }
 
-    public DomaineResponse update(UUID id, DomaineRequest dto) {
+    public DomaineDTO update(Long id, DomaineDTO dto) {
 
         Domaine domaine = domaineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Domaine non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Domaine non trouvé"));
 
         if (!domaine.getNom().equals(dto.getNom())
                 && domaineRepository.existsByNom(dto.getNom())) {
 
-            throw new BadRequestException("Un domaine avec ce nom existe déjà.");
+            throw new RuntimeException("Un domaine avec ce nom existe déjà.");
         }
 
         domaine.setNom(dto.getNom());
 
         Domaine updated = domaineRepository.save(domaine);
 
-        return convertToResponse(updated);
+        return convertToDTO(updated);
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         Domaine domaine = domaineRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Domaine non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Domaine non trouvé"));
 
         domaineRepository.delete(domaine);
     }
 
-    private DomaineResponse convertToResponse(Domaine domaine) {
+    private DomaineDTO convertToDTO(Domaine domaine) {
 
-        DomaineResponse response = new DomaineResponse();
-        response.setId(domaine.getId());
-        response.setNom(domaine.getNom());
+        DomaineDTO dto = new DomaineDTO();
+        dto.setId(domaine.getId());
+        dto.setNom(domaine.getNom());
 
-        return response;
+        return dto;
     }
 }

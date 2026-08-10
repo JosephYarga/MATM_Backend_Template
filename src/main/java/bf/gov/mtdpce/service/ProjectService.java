@@ -1,8 +1,6 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.ProjectRequest;
-import bf.gov.mtdpce.dto.response.ProjectResponse;
+import bf.gov.mtdpce.dto.ProjectDTO;
 import bf.gov.mtdpce.entity.Project;
 import bf.gov.mtdpce.entity.ProjectStatus;
 import bf.gov.mtdpce.entity.ProjetCategorie;
@@ -32,37 +30,37 @@ public class ProjectService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<ProjectResponse> getAllProjects(Pageable pageable) {
-        return projectRepository.findAll(pageable).map(this::convertToResponse);
+    public Page<ProjectDTO> getAllProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable).map(this::convertToDTO);
     }
 
-    public Page<ProjectResponse> getProjectsByStatus(ProjectStatus status, Pageable pageable) {
-        return projectRepository.findByStatus(status, pageable).map(this::convertToResponse);
+    public Page<ProjectDTO> getProjectsByStatus(ProjectStatus status, Pageable pageable) {
+        return projectRepository.findByStatus(status, pageable).map(this::convertToDTO);
     }
 
-    public Page<ProjectResponse> searchProjects(String search, Pageable pageable) {
-        return projectRepository.searchProjects(search, pageable).map(this::convertToResponse);
+    public Page<ProjectDTO> searchProjects(String search, Pageable pageable) {
+        return projectRepository.searchProjects(search, pageable).map(this::convertToDTO);
     }
 
-    public Page<ProjectResponse> getPublicProjects(Pageable pageable) {
-        return projectRepository.findAll(pageable).map(this::convertToResponse);
+    public Page<ProjectDTO> getPublicProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable).map(this::convertToDTO);
     }
 
-    public List<ProjectResponse> getLatestProjects() {
+    public List<ProjectDTO> getLatestProjects() {
         return projectRepository.findTop5ByOrderByCreatedAtDesc()
                 .stream()
-                .map(this::convertToResponse)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public ProjectResponse getProjectById(UUID id) {
+    public ProjectDTO getProjectById(Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projet", "id", id));
-        return convertToResponse(project);
+        return convertToDTO(project);
     }
 
     @Transactional
-    public ProjectResponse createProject(ProjectRequest projectDTO, UUID managerId) {
+    public ProjectDTO createProject(ProjectDTO projectDTO, Long managerId) {
         User manager = null;
         if (managerId != null) {
             manager = userRepository.findById(managerId)
@@ -88,11 +86,11 @@ public class ProjectService {
                 .manager(manager)
                 .build();
 
-        return convertToResponse(projectRepository.save(project));
+        return convertToDTO(projectRepository.save(project));
     }
 
     @Transactional
-    public ProjectResponse updateProject(UUID id, ProjectRequest projectDTO) {
+    public ProjectDTO updateProject(Long id, ProjectDTO projectDTO) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projet", "id", id));
 
@@ -118,11 +116,11 @@ public class ProjectService {
             project.setManager(manager);
         }
 
-        return convertToResponse(projectRepository.save(project));
+        return convertToDTO(projectRepository.save(project));
     }
 
     @Transactional
-    public void deleteProject(UUID id) {
+    public void deleteProject(Long id) {
         if (!projectRepository.existsById(id)) {
             throw new ResourceNotFoundException("Projet", "id", id);
         }
@@ -142,8 +140,8 @@ public class ProjectService {
         return avg != null ? avg : 0.0;
     }
 
-    private ProjectResponse convertToResponse(Project project) {
-        ProjectResponse.ProjectResponseBuilder builder = ProjectResponse.builder()
+    private ProjectDTO convertToDTO(Project project) {
+        ProjectDTO.ProjectDTOBuilder builder = ProjectDTO.builder()
                 .id(project.getId())
                 .name(project.getName())
                 .description(project.getDescription())

@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.FlashInfo;
 import bf.gov.mtdpce.entity.FlashInfoPriority;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface FlashInfoRepository extends JpaRepository<FlashInfo, UUID> {
+public interface FlashInfoRepository extends JpaRepository<FlashInfo, Long> {
     
     @Query("SELECT f FROM FlashInfo f WHERE f.isActive = true AND " +
            "(f.startDate IS NULL OR f.startDate <= :now) AND " +
@@ -22,9 +21,6 @@ public interface FlashInfoRepository extends JpaRepository<FlashInfo, UUID> {
     List<FlashInfo> findActiveFlashInfos(LocalDateTime now);
     
     Page<FlashInfo> findByIsActiveTrueOrderByPriorityDescCreatedAtDesc(Pageable pageable);
-
-    /** Toutes les flash infos (actives et inactives) pour l'administration. */
-    List<FlashInfo> findAllByOrderByPriorityDescCreatedAtDesc();
     
     List<FlashInfo> findByPriorityOrderByCreatedAtDesc(FlashInfoPriority priority);
     

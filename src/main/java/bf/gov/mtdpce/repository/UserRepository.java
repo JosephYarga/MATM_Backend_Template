@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.User;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
 

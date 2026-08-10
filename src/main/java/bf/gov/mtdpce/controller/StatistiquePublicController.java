@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.controller;
-import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.StatistiquePublicRequest;
-import bf.gov.mtdpce.dto.response.StatistiquePublicResponse;
+import bf.gov.mtdpce.dto.StatistiquePublicDTO;
 import bf.gov.mtdpce.service.StatistiquePublicService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +24,7 @@ public class StatistiquePublicController {
 
     @GetMapping
     @Operation(summary = "Liste des statistiques")
-    public ResponseEntity<ApiResponse<Page<StatistiquePublicResponse>>> getAll(
+    public ResponseEntity<ApiResponse<Page<StatistiquePublicDTO>>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nom") String sortBy,
@@ -45,7 +43,7 @@ public class StatistiquePublicController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'une statistique")
-    public ResponseEntity<ApiResponse<StatistiquePublicResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<StatistiquePublicDTO>> getById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(statistiqueService.getById(id))
@@ -55,8 +53,8 @@ public class StatistiquePublicController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer une statistique")
-    public ResponseEntity<StatistiquePublicResponse> create(
-            @RequestBody StatistiquePublicRequest dto) {
+    public ResponseEntity<StatistiquePublicDTO> create(
+            @RequestBody StatistiquePublicDTO dto) {
 
         return ResponseEntity.ok(
                 statistiqueService.create(dto)
@@ -66,9 +64,9 @@ public class StatistiquePublicController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier une statistique")
-    public ResponseEntity<StatistiquePublicResponse> update(
-            @PathVariable UUID id,
-            @RequestBody StatistiquePublicRequest dto) {
+    public ResponseEntity<StatistiquePublicDTO> update(
+            @PathVariable Long id,
+            @RequestBody StatistiquePublicDTO dto) {
 
         return ResponseEntity.ok(
                 statistiqueService.update(id, dto)
@@ -78,7 +76,7 @@ public class StatistiquePublicController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer une statistique")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
 
         statistiqueService.delete(id);
 

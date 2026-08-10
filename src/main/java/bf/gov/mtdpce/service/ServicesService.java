@@ -1,9 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.BadRequestException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.ServicesRequest;
-import bf.gov.mtdpce.dto.response.ServicesResponse;
+import bf.gov.mtdpce.dto.ServicesDTO;
 import bf.gov.mtdpce.entity.Services;
 import bf.gov.mtdpce.entity.User;
 import bf.gov.mtdpce.exception.ResourceNotFoundException;
@@ -25,26 +22,26 @@ public class ServicesService {
     private UserRepository userRepository;
 
 
-    public Page<ServicesResponse> getAll(Pageable pageable) {
+    public Page<ServicesDTO> getAll(Pageable pageable) {
         return servicesRepository.findAll(pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public ServicesResponse getById(UUID id) {
+    public ServicesDTO getById(Long id) {
         Services service = servicesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec id : " + id));
+                .orElseThrow(() -> new RuntimeException("Service non trouvé avec id : " + id));
 
-        return convertToResponse(service);
+        return convertToDTO(service);
     }
 
     @Transactional
-    public ServicesResponse create(ServicesRequest servicesDTO,UUID authorId) {
+    public ServicesDTO create(ServicesDTO servicesDTO,Long authorId) {
 
         User author = userRepository.findById(authorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", authorId));
 
         if (servicesRepository.existsByName(servicesDTO.getName())) {
-            throw new BadRequestException("Un service avec ce nom existe déjà");
+            throw new RuntimeException("Un service avec ce nom existe déjà");
         }
 
         Services services = Services.builder()
@@ -54,38 +51,48 @@ public class ServicesService {
                 .logo(servicesDTO.getLogo())
                 .build();
 
-        return convertToResponse(servicesRepository.save(services));
+        return convertToDTO(servicesRepository.save(services));
     }
 
     @Transactional
-    public ServicesResponse update(UUID id, ServicesRequest servicesDTO) {
+    public ServicesDTO update(Long id, ServicesDTO servicesDTO) {
 
         Services services = servicesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec id : " + id));
+                .orElseThrow(() -> new RuntimeException("Service non trouvé avec id : " + id));
 
         if(servicesDTO.getName() != null) services.setName(servicesDTO.getName());
         if(servicesDTO.getDescription() != null) services.setDescription(servicesDTO.getDescription());
         if(servicesDTO.getUrl() != null) services.setUrl(servicesDTO.getUrl());
         if(servicesDTO.getLogo()!= null) services.setLogo(servicesDTO.getLogo());
 
-        return convertToResponse(servicesRepository.save(services));
+        return convertToDTO(servicesRepository.save(services));
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
         Services services = servicesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service non trouvé avec id : " + id));
+                .orElseThrow(() -> new RuntimeException("Service non trouvé avec id : " + id));
 
         servicesRepository.delete(services);
     }
 
 
-    private ServicesResponse convertToResponse(Services service) {
-        ServicesResponse dto = new ServicesResponse();
+    private ServicesDTO convertToDTO(Services service) {
+        ServicesDTO dto = new ServicesDTO();
         dto.setId(service.getId());
         dto.setName(service.getName());
         dto.setDescription(service.getDescription());
         dto.setUrl(service.getUrl());
         dto.setLogo(service.getLogo());
         return dto;
+    }
+
+    private Services convertToEntity(ServicesDTO dto) {
+        Services service = new Services();
+        service.setId(dto.getId());
+        service.setName(dto.getName());
+        service.setDescription(dto.getDescription());
+        service.setUrl(dto.getUrl());
+        service.setLogo(dto.getLogo());
+        return service;
     }
 }

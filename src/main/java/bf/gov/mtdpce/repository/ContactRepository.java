@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Contact;
 import bf.gov.mtdpce.entity.ContactStatus;
@@ -11,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ContactRepository extends JpaRepository<Contact, UUID> {
+public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     Page<Contact> findByStatus(ContactStatus status, Pageable pageable);
 

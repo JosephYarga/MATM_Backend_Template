@@ -1,9 +1,6 @@
 package bf.gov.mtdpce.service;
-import bf.gov.mtdpce.exception.ResourceNotFoundException;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.StructureRattacheRequest;
-import bf.gov.mtdpce.dto.response.StructureRattacheResponse;
+import bf.gov.mtdpce.dto.StructureRattacheDTO;
 import bf.gov.mtdpce.entity.Domaine;
 import bf.gov.mtdpce.entity.Ministere;
 import bf.gov.mtdpce.entity.StructureRattache;
@@ -31,23 +28,23 @@ public class StructureRattacheService {
     @Autowired
     private MinistereRepository ministereRepository;
 
-    public Page<StructureRattacheResponse> getAll(Pageable pageable) {
+    public Page<StructureRattacheDTO> getAll(Pageable pageable) {
         return repository.findAll(pageable)
-                .map(this::mapToResponse);
+                .map(this::mapToDTO);
     }
 
-    public StructureRattacheResponse getById(UUID id) {
+    public StructureRattacheDTO getById(Long id) {
 
         StructureRattache entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure rattachée non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Structure rattachée non trouvée"));
 
-        return mapToResponse(entity);
+        return mapToDTO(entity);
     }
 
-    public StructureRattacheResponse create(StructureRattacheRequest dto) {
+    public StructureRattacheDTO create(StructureRattacheDTO dto) {
 
         Ministere ministere = ministereRepository.findById(dto.getMinistereId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ministere introuvable"));
+                .orElseThrow(() -> new RuntimeException("Ministere introuvable"));
 
         Set<Domaine> domaines = new HashSet<>();
         if (dto.getDomaineIds() != null) {
@@ -69,17 +66,17 @@ public class StructureRattacheService {
         structureRattache.setMinistere(ministere);
         structureRattache.setDomaines(domaines);
 
-        return mapToResponse(repository.save(structureRattache));
+        return mapToDTO(repository.save(structureRattache));
     }
 
-    public StructureRattacheResponse update(UUID id, StructureRattacheRequest dto) {
+    public StructureRattacheDTO update(Long id, StructureRattacheDTO dto) {
 
         StructureRattache structureRattache = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure introuvable"));
+                .orElseThrow(() -> new RuntimeException("Structure introuvable"));
 
         if (dto.getMinistereId() != null) {
             Ministere ministere = ministereRepository.findById(dto.getMinistereId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Ministere introuvable"));
+                    .orElseThrow(() -> new RuntimeException("Ministere introuvable"));
             structureRattache.setMinistere(ministere);
         }
 
@@ -103,20 +100,20 @@ public class StructureRattacheService {
             structureRattache.setLogourl(dto.getLogourl());
         }
 
-        return mapToResponse(repository.save(structureRattache));
+        return mapToDTO(repository.save(structureRattache));
     }
 
-    public void delete(UUID id) {
+    public void delete(Long id) {
 
         StructureRattache entity = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Structure rattachée non trouvée"));
+                .orElseThrow(() -> new RuntimeException("Structure rattachée non trouvée"));
 
         repository.delete(entity);
     }
 
-    private StructureRattacheResponse mapToResponse(StructureRattache structureRattache) {
+    private StructureRattacheDTO mapToDTO(StructureRattache structureRattache) {
 
-        StructureRattacheResponse dto = new StructureRattacheResponse();
+        StructureRattacheDTO dto = new StructureRattacheDTO();
 
         dto.setId(structureRattache.getId());
         dto.setName(structureRattache.getName());
@@ -140,7 +137,7 @@ public class StructureRattacheService {
         return dto;
     }
 
-    private void mapToEntity(StructureRattacheRequest dto, StructureRattache entity) {
+    private void mapToEntity(StructureRattacheDTO dto, StructureRattache entity) {
 
         entity.setName(dto.getName());
         entity.setAcronym(dto.getAcronym());
@@ -156,7 +153,7 @@ public class StructureRattacheService {
             Set<Domaine> domaines = dto.getDomaineIds()
                     .stream()
                     .map(id -> domaineRepository.findById(id)
-                            .orElseThrow(() -> new ResourceNotFoundException("Domaine non trouvé : " + id)))
+                            .orElseThrow(() -> new RuntimeException("Domaine non trouvé : " + id)))
                     .collect(Collectors.toSet());
 
             entity.setDomaines(domaines);

@@ -1,8 +1,6 @@
 package bf.gov.mtdpce.controller;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.ProjetCategorieRequest;
-import bf.gov.mtdpce.dto.response.ProjetCategorieResponse;
+import bf.gov.mtdpce.dto.ProjetCategorieDTO;
 import bf.gov.mtdpce.service.ProjetCategorieService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,31 +21,31 @@ public class ProjetCategorieController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ProjetCategorieResponse> create(@Valid @RequestBody ProjetCategorieRequest dto) {
+    public ResponseEntity<ProjetCategorieDTO> create(@Valid @RequestBody ProjetCategorieDTO dto) {
         return new ResponseEntity<>(projetCategorieService.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ProjetCategorieResponse> update(
-            @PathVariable UUID id,
-            @Valid @RequestBody ProjetCategorieRequest dto) {
+    public ResponseEntity<ProjetCategorieDTO> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProjetCategorieDTO dto) {
         return ResponseEntity.ok(projetCategorieService.update(id, dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjetCategorieResponse> getById(@PathVariable UUID id) {
+    public ResponseEntity<ProjetCategorieDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(projetCategorieService.getById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjetCategorieResponse>> getAll() {
+    public ResponseEntity<List<ProjetCategorieDTO>> getAll() {
         return ResponseEntity.ok(projetCategorieService.getAll());
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         projetCategorieService.delete(id);
         return ResponseEntity.noContent().build();
     }

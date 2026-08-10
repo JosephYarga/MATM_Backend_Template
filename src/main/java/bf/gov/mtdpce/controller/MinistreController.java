@@ -1,10 +1,7 @@
 package bf.gov.mtdpce.controller;
-import bf.gov.mtdpce.exception.BadRequestException;
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.MinistreRequest;
-import bf.gov.mtdpce.dto.response.MinistreResponse;
+import bf.gov.mtdpce.dto.MinistreDTO;
 import bf.gov.mtdpce.service.MinistreService;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +32,11 @@ public class MinistreController {
 
     @Autowired
     private MinistreService ministreService;
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     @GetMapping
     @Operation(summary = "Liste des ministres")
-    public ResponseEntity<ApiResponse<Page<MinistreResponse>>> getAll(
+    public ResponseEntity<ApiResponse<Page<MinistreDTO>>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -57,18 +53,9 @@ public class MinistreController {
         );
     }
 
-    @GetMapping("/anciens")
-    @Operation(summary = "Anciens ministres", description = "Ministres qui ne sont plus en fonction, paginés")
-    public ResponseEntity<ApiResponse<Page<MinistreResponse>>> getFormer(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "6") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(ApiResponse.success(ministreService.getFormerMinisters(pageable)));
-    }
-
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'un ministre")
-    public ResponseEntity<ApiResponse<MinistreResponse>> getById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<MinistreDTO>> getById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(ministreService.getById(id))
@@ -78,40 +65,40 @@ public class MinistreController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un ministre")
-    public ResponseEntity<MinistreResponse> create(
-            @RequestPart("ministre") @Valid MinistreRequest request,
+    public ResponseEntity<MinistreDTO> create(
+            @RequestPart("ministre") MinistreDTO ministreDTO,
             @RequestPart(value = "photo", required = false) MultipartFile photo
     ) throws IOException {
 
         if (photo != null && !photo.isEmpty()) {
             String filePath = saveFile(photo);
-            request.setPhoto(filePath);
+            ministreDTO.setPhoto(filePath);
         }
 
-        return ResponseEntity.ok(ministreService.create(request));
+        return ResponseEntity.ok(ministreService.create(ministreDTO));
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un ministre")
-    public ResponseEntity<MinistreResponse> update(
-            @PathVariable UUID id,
-            @RequestPart("ministre") @Valid MinistreRequest request,
+    public ResponseEntity<MinistreDTO> update(
+            @PathVariable Long id,
+            @RequestPart("ministre") MinistreDTO ministreDTO,
             @RequestPart(value = "photo", required = false) MultipartFile photo
     ) throws IOException {
 
         if (photo != null && !photo.isEmpty()) {
             String filePath = saveFile(photo);
-            request.setPhoto(filePath);
+            ministreDTO.setPhoto(filePath);
         }
 
-        return ResponseEntity.ok(ministreService.update(id, request));
+        return ResponseEntity.ok(ministreService.update(id, ministreDTO));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un ministre")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
 
         ministreService.delete(id);
 
@@ -125,7 +112,7 @@ public class MinistreController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new BadRequestException("Type de fichier inconnu");
+            throw new RuntimeException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -138,7 +125,7 @@ public class MinistreController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new BadRequestException("Type de fichier non supporté : " + contentType);
+            throw new RuntimeException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

@@ -1,10 +1,5 @@
 server:
   port: 8096
-  # Ne jamais divulguer les détails techniques (stacktrace, classe d'exception) au client.
-  error:
-    include-stacktrace: never
-    include-exception: false
-    include-binding-errors: never
 
 spring:
   application:
@@ -16,9 +11,9 @@ spring:
       max-request-size: 5MB
   
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/mtdpce_db}
-    username: ${DB_USERNAME:mtdpce_user}
-    password: ${DB_PASSWORD:mtdpce2026}
+    url: jdbc:postgresql://localhost:5432/mtdpce_db
+    username: mtdpce_user
+    password: mtdpce2026
     driver-class-name: org.postgresql.Driver
   
   jpa:
@@ -34,35 +29,6 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Africa/Ouagadougou
-
-  mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-# Paramètres applicatifs (réinitialisation de mot de passe)
-app:
-  mail:
-    # Mettre MAIL_ENABLED=true + identifiants SMTP pour l'envoi réel des emails.
-    # Sinon le lien de réinitialisation est journalisé dans les logs (mode dev).
-    enabled: ${MAIL_ENABLED:false}
-    from: ${MAIL_FROM:no-reply@mtdpce.gov.bf}
-  frontend-url: ${FRONTEND_URL:http://localhost:4200}
-  # URL publique du site, utilisée pour générer le sitemap.xml dynamique.
-  public-url: ${SITE_URL:https://site-test.tic.gov.bf}
-  password-reset:
-    token-validity-minutes: 60
-  # Dossier de stockage des fichiers uploadés.
-  # En local : sous le HOME (toujours accessible en écriture). En prod : /opt/mtdpce/uploads via la variable UPLOAD_BASE_PATH.
-  upload:
-    base-path: ${UPLOAD_BASE_PATH:${user.home}/mtdpce-uploads}
 
 # JWT Configuration
 jwt:
@@ -94,8 +60,7 @@ logging:
     org.springframework.security: DEBUG
 
 facebook:
-  page-id: ${FACEBOOK_PAGE_ID:308567739007291}
-  # Secret : fourni via la variable d'environnement FACEBOOK_ACCESS_TOKEN (jamais commité).
-  access-token: ${FACEBOOK_ACCESS_TOKEN:}
-  graph-api-url: ${FACEBOOK_GRAPH_API_URL:https://graph.facebook.com/v25.0}
-  base-url: ${FACEBOOK_BASE_URL:https://site-test.tic.gov.bf}
+  page-id: 308567739007291
+  access-token: EAAUaCZClpIGMBQym1kANQGMj4PxAte0O1UmodKb4nETqa6nsdZCYa2BMo7UX0vkmtix9WvMXFoAw0frzSgVzsMeM3zxsnDOtTB3zxZBAkvTXDknZCYqoptw33XfKMMPZCrJJ0SG138RnDXkrjR5iwwhphEZCb2DUCxiUf8mGMxys7UPTrZCZCUyIhxQZCZB8GSJGGzZCSUr2Mgi
+  graph-api-url: https://graph.facebook.com/v25.0
+  base-url: https://site-test.tic.gov.bf

@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.dto.response;
-import java.util.UUID;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,7 +6,7 @@ import java.util.List;
 
 public class ServiceResponse {
     
-    private UUID id;
+    private Long id;
     private String name;
     private String description;
     private String category;
@@ -33,8 +32,8 @@ public class ServiceResponse {
     private LocalDateTime updatedAt;
 
     // Getters and Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.AgendaRequest;
-import bf.gov.mtdpce.dto.response.AgendaResponse;
-import bf.gov.mtdpce.dto.response.AgendaImageResponse;
+import bf.gov.mtdpce.dto.AgendaDTO;
+import bf.gov.mtdpce.dto.AgendaImageDTO;
 import bf.gov.mtdpce.entity.Agenda;
 import bf.gov.mtdpce.entity.AgendaImage;
 import bf.gov.mtdpce.entity.AgendaStatus;
@@ -29,34 +27,34 @@ public class AgendaService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<AgendaResponse> getAllAgenda(Pageable pageable) {
-        return agendaRepository.findAll(pageable).map(this::convertToResponse);
+    public Page<AgendaDTO> getAllAgenda(Pageable pageable) {
+        return agendaRepository.findAll(pageable).map(this::convertToDTO);
     }
 
-    public Page<AgendaResponse> getPublishedArticles(Pageable pageable) {
-        return agendaRepository.findByStatus(AgendaStatus.PUBLISHED, pageable).map(this::convertToResponse);
+    public Page<AgendaDTO> getPublishedArticles(Pageable pageable) {
+        return agendaRepository.findByStatus(AgendaStatus.PUBLISHED, pageable).map(this::convertToDTO);
     }
 
-    public Page<AgendaResponse> searchPublishedAgenda(String search, Pageable pageable) {
+    public Page<AgendaDTO> searchPublishedAgenda(String search, Pageable pageable) {
         return agendaRepository.searchPublishedAgenda(search, AgendaStatus.PUBLISHED, pageable)
-                .map(this::convertToResponse);
+                .map(this::convertToDTO);
     }
 
-    public List<AgendaResponse> getLatestAgenda() {
+    public List<AgendaDTO> getLatestAgenda() {
         return agendaRepository.findTop5ByStatusOrderByPublishedAtDesc(AgendaStatus.PUBLISHED)
                 .stream()
-                .map(this::convertToResponse)
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public AgendaResponse getAgendaById(UUID id) {
+    public AgendaDTO getAgendaById(Long id) {
         Agenda agenda = agendaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Agenda", "id", id));
-        return convertToResponse(agenda);
+        return convertToDTO(agenda);
     }
 
     @Transactional
-    public AgendaResponse getPublishedAgendaById(UUID id) {
+    public AgendaDTO getPublishedAgendaById(Long id) {
         Agenda agenda = agendaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Agenda", "id", id));
 
@@ -64,12 +62,12 @@ public class AgendaService {
             throw new ResourceNotFoundException("Agenda", "id", id);
         }
         agendaRepository.save(agenda);
-        return convertToResponse(agenda);
+        return convertToDTO(agenda);
     }
 
     @Transactional
-    public AgendaResponse createAgenda(AgendaRequest agendaDTO,
-                                  UUID authorId,
+    public AgendaDTO createAgenda(AgendaDTO agendaDTO,
+                                  Long authorId,
                                   List<String> imagePaths) {
 
         User author = userRepository.findById(authorId)
@@ -99,12 +97,12 @@ public class AgendaService {
             }
         }
 
-        return convertToResponse(agendaRepository.save(agenda));
+        return convertToDTO(agendaRepository.save(agenda));
     }
 
     @Transactional
-    public AgendaResponse updateAgenda(UUID id,
-                                  AgendaRequest agendaDTO,
+    public AgendaDTO updateAgenda(Long id,
+                                  AgendaDTO agendaDTO,
                                   List<String> imagePaths) {
 
         Agenda agenda = agendaRepository.findById(id)
@@ -148,11 +146,11 @@ public class AgendaService {
             }
         }
 
-        return convertToResponse(agendaRepository.save(agenda));
+        return convertToDTO(agendaRepository.save(agenda));
     }
 
     @Transactional
-    public void deleteArticle(UUID id) {
+    public void deleteArticle(Long id) {
         if (!agendaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Article", "id", id);
         }
@@ -163,16 +161,16 @@ public class AgendaService {
         return agendaRepository.countByStatus(AgendaStatus.PUBLISHED);
     }
 
-    private AgendaResponse convertToResponse(Agenda agenda) {
+    private AgendaDTO convertToDTO(Agenda agenda) {
 
-        List<AgendaImageResponse> images = agenda.getImages()
+        List<AgendaImageDTO> images = agenda.getImages()
                 .stream()
-                .map(img -> AgendaImageResponse.builder()
+                .map(img -> AgendaImageDTO.builder()
                         .id(img.getId())
                         .imageUrl(img.getImageUrl())
                         .build())
                 .toList();
-        return AgendaResponse.builder()
+        return AgendaDTO.builder()
                 .id(agenda.getId())
                 .title(agenda.getTitle())
                 .summary(agenda.getSummary())

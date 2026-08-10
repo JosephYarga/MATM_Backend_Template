@@ -1,9 +1,8 @@
 package bf.gov.mtdpce.controller;
-import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.ArticleRequest;
-import bf.gov.mtdpce.dto.response.ArticleResponse;
+import bf.gov.mtdpce.dto.ArticleDTO;
+import bf.gov.mtdpce.entity.ArticleCategory;
 import bf.gov.mtdpce.security.UserDetailsImpl;
 import bf.gov.mtdpce.service.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,13 +38,12 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
 
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     // Public endpoints
     @GetMapping("/published")
     @Operation(summary = "Articles publiés", description = "Récupère la liste des articles publiés")
-    public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getPublishedArticles(
+    public ResponseEntity<ApiResponse<Page<ArticleDTO>>> getPublishedArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
@@ -55,30 +53,30 @@ public class ArticleController {
 
     @GetMapping("/published/latest")
     @Operation(summary = "Derniers articles", description = "Récupère les 5 derniers articles publiés")
-    public ResponseEntity<ApiResponse<List<ArticleResponse>>> getLatestArticles() {
+    public ResponseEntity<ApiResponse<List<ArticleDTO>>> getLatestArticles() {
         return ResponseEntity.ok(ApiResponse.success(articleService.getLatestArticles()));
     }
 
     @GetMapping("/published/featured")
     @Operation(summary = "Articles à la une", description = "Récupère les articles mis en avant")
-    public ResponseEntity<ApiResponse<List<ArticleResponse>>> getFeaturedArticles() {
+    public ResponseEntity<ApiResponse<List<ArticleDTO>>> getFeaturedArticles() {
         return ResponseEntity.ok(ApiResponse.success(articleService.getFeaturedArticles()));
     }
 
     @GetMapping("/published/category/{category}")
     @Operation(summary = "Articles par catégorie", description = "Récupère les articles publiés d'une catégorie")
-    public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getArticlesByCategory(
-            @PathVariable String category,
+    public ResponseEntity<ApiResponse<Page<ArticleDTO>>> getArticlesByCategory(
+            @PathVariable ArticleCategory category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
+        
         Pageable pageable = PageRequest.of(page, size, Sort.by("publishedAt").descending());
         return ResponseEntity.ok(ApiResponse.success(articleService.getArticlesByCategory(category, pageable)));
     }
 
     @GetMapping("/published/search")
     @Operation(summary = "Recherche d'articles", description = "Recherche dans les articles publiés")
-    public ResponseEntity<ApiResponse<Page<ArticleResponse>>> searchPublishedArticles(
+    public ResponseEntity<ApiResponse<Page<ArticleDTO>>> searchPublishedArticles(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -89,7 +87,7 @@ public class ArticleController {
 
     @GetMapping("/published/{id}")
     @Operation(summary = "Détail article publié", description = "Récupère un article publié par son ID")
-    public ResponseEntity<ApiResponse<ArticleResponse>> getPublishedArticleById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> getPublishedArticleById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(articleService.getPublishedArticleById(id)));
     }
 
@@ -97,7 +95,7 @@ public class ArticleController {
     @GetMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Tous les articles", description = "Récupère tous les articles (admin)")
-    public ResponseEntity<ApiResponse<Page<ArticleResponse>>> getAllArticles(
+    public ResponseEntity<ApiResponse<Page<ArticleDTO>>> getAllArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -112,7 +110,7 @@ public class ArticleController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Détail article", description = "Récupère un article par son ID (admin)")
-    public ResponseEntity<ApiResponse<ArticleResponse>> getArticleById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ArticleDTO>> getArticleById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(articleService.getArticleById(id)));
     }
 
@@ -125,9 +123,9 @@ public class ArticleController {
             summary = "Modifier un article",
             description = "Modifie un article existant avec ou sans nouveau fichier"
     )
-    public ResponseEntity<ArticleResponse> updateArticle(
-            @PathVariable UUID id,
-            @RequestPart("article") @Valid ArticleRequest articleDTO,
+    public ResponseEntity<ArticleDTO> updateArticle(
+            @PathVariable Long id,
+            @RequestPart("article") ArticleDTO articleDTO,
             @RequestPart(value = "file", required = false) List<MultipartFile> file,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
@@ -135,7 +133,7 @@ public class ArticleController {
 
             List<String> imagePaths = uploadMultipleFiles(file);
             List<String> imagePathsFacebook = uploadMultipleFiles(files);
-            ArticleResponse updatedArticle = articleService.updateArticle(id, articleDTO,imagePaths,imagePathsFacebook);
+            ArticleDTO updatedArticle = articleService.updateArticle(id, articleDTO,imagePaths,imagePathsFacebook);
 
             return ResponseEntity.ok(updatedArticle);
 
@@ -144,19 +142,10 @@ public class ArticleController {
         }
     }
 
-    @PostMapping("/{id}/facebook")
-    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Publier un article sur Facebook",
-            description = "Envoie l'article sur la page Facebook (contenu Facebook spécifique si renseigné), quel que soit son statut")
-    public ResponseEntity<ApiResponse<ArticleResponse>> publishOnFacebook(@PathVariable UUID id) {
-        ArticleResponse article = articleService.publishOnFacebook(id);
-        return ResponseEntity.ok(ApiResponse.success("Publication Facebook déclenchée", article));
-    }
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un article", description = "Supprime un article")
-    public ResponseEntity<ApiResponse<Void>> deleteArticle(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteArticle(@PathVariable Long id) {
         articleService.deleteArticle(id);
         return ResponseEntity.ok(ApiResponse.success("Article supprimé", null));
     }
@@ -164,16 +153,16 @@ public class ArticleController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un article", description = "Crée un nouvel article avec image ou document")
-    public ResponseEntity<ArticleResponse> createArticle(
-            @RequestPart("article") @Valid ArticleRequest articleDTO,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<ArticleDTO> createArticle(
+            @RequestPart("article") ArticleDTO articleDTO,
+            @RequestParam Long authorId,
             @RequestPart(value = "file", required = false) List<MultipartFile> file,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
         try {
             List<String> imagePaths = uploadMultipleFiles(file);
             List<String> imagePathsFacebook = uploadMultipleFiles(files);
-            ArticleResponse savedArticle = articleService.createArticle(articleDTO, userDetails.getId(),imagePaths,imagePathsFacebook);
+            ArticleDTO savedArticle = articleService.createArticle(articleDTO, authorId,imagePaths,imagePathsFacebook);
             return ResponseEntity.ok(savedArticle);
 
         } catch (IOException e) {
@@ -208,7 +197,7 @@ public class ArticleController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new BadRequestException("Type de fichier inconnu");
+            throw new RuntimeException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -221,7 +210,7 @@ public class ArticleController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new BadRequestException("Type de fichier non supporté : " + contentType);
+            throw new RuntimeException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

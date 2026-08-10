@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.controller;
-import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.ServicesRequest;
-import bf.gov.mtdpce.dto.response.ServicesResponse;
+import bf.gov.mtdpce.dto.ServicesDTO;
 import bf.gov.mtdpce.service.ServicesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import bf.gov.mtdpce.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,12 +34,11 @@ public class ServicesController {
     @Autowired
     private ServicesService servicesService;
 
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     @GetMapping
     @Operation(summary = "Liste des services", description = "Récupère la liste des services")
-    public ResponseEntity<ApiResponse<Page<ServicesResponse>>> getAllServices(
+    public ResponseEntity<ApiResponse<Page<ServicesDTO>>> getAllServices(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -62,7 +57,7 @@ public class ServicesController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'un service", description = "Récupère un service par son ID")
-    public ResponseEntity<ApiResponse<ServicesResponse>> getServiceById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ServicesDTO>> getServiceById(@PathVariable Long id) {
         return ResponseEntity.ok(
                 ApiResponse.success(servicesService.getById(id))
         );
@@ -71,9 +66,9 @@ public class ServicesController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un service", description = "Crée un service avec logo optionnel")
-    public ResponseEntity<ServicesResponse> createService(
-            @RequestPart("service") ServicesRequest servicesDTO,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<ServicesDTO> createService(
+            @RequestPart("service") ServicesDTO servicesDTO,
+            @RequestParam Long authorId,
             @RequestPart(value = "logo", required = false) MultipartFile logo
     ) {
         try {
@@ -83,7 +78,7 @@ public class ServicesController {
                 servicesDTO.setLogo(filePath);
             }
 
-            ServicesResponse savedService = servicesService.create(servicesDTO,userDetails.getId());
+            ServicesDTO savedService = servicesService.create(servicesDTO,authorId);
 
             return ResponseEntity.ok(savedService);
 
@@ -95,9 +90,9 @@ public class ServicesController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un service", description = "Modifie un service existant avec ou sans nouveau logo")
-    public ResponseEntity<ServicesResponse> updateService(
-            @PathVariable UUID id,
-            @RequestPart("service") ServicesRequest servicesDTO,
+    public ResponseEntity<ServicesDTO> updateService(
+            @PathVariable Long id,
+            @RequestPart("service") ServicesDTO servicesDTO,
             @RequestPart(value = "logo", required = false) MultipartFile logo
     ) {
         try {
@@ -107,7 +102,7 @@ public class ServicesController {
                 servicesDTO.setLogo(filePath);
             }
 
-            ServicesResponse updatedService = servicesService.update(id, servicesDTO);
+            ServicesDTO updatedService = servicesService.update(id, servicesDTO);
 
             return ResponseEntity.ok(updatedService);
 
@@ -119,7 +114,7 @@ public class ServicesController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un service", description = "Supprime un service")
-    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable Long id) {
 
         servicesService.delete(id);
 
@@ -133,7 +128,7 @@ public class ServicesController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new BadRequestException("Type de fichier inconnu");
+            throw new RuntimeException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -146,7 +141,7 @@ public class ServicesController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new BadRequestException("Type de fichier non supporté : " + contentType);
+            throw new RuntimeException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

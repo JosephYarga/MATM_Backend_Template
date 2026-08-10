@@ -1,18 +1,5 @@
 server:
   port: 8096
-  # Ne jamais divulguer les détails techniques au client en production.
-  error:
-    include-stacktrace: never
-    include-message: never
-    include-exception: false
-    include-binding-errors: never
-
-# Stockage des fichiers en production
-app:
-  # URL publique du site, utilisée pour générer le sitemap.xml dynamique.
-  public-url: ${SITE_URL:https://site-test.tic.gov.bf}
-  upload:
-    base-path: ${UPLOAD_BASE_PATH:/opt/mtdpce/uploads}
 
 spring:
   application:
@@ -23,9 +10,9 @@ spring:
       max-file-size: 5MB
       max-request-size: 5MB
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/mtdpce_db}
-    username: ${DB_USERNAME:mtdpce_user}
-    password: ${DB_PASSWORD:}
+    url: jdbc:postgresql://localhost:5432/mtdpce_db
+    username: mtdpce_user
+    password: mtdpce2026
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -47,12 +34,15 @@ jwt:
   secret: MTDPCEBurkinaFaso2024SecretKeyForJWTTokenGenerationAndValidation256Bits
   expiration: 86400000
 
-# Swagger / OpenAPI : DÉSACTIVÉ en production (n'expose pas la surface d'API ni la version).
+# Swagger / OpenAPI Configuration
 springdoc:
   api-docs:
-    enabled: false
+    path: /api-docs
   swagger-ui:
-    enabled: false
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
 
 # CORS Configuration
 cors:
@@ -61,16 +51,15 @@ cors:
   allowed-headers: "*"
   allow-credentials: true
 
-# Logging : niveaux réduits en production (évite de journaliser des données sensibles).
+# Logging
 logging:
   level:
-    root: WARN
-    bf.gov.mtdpce: INFO
-    org.springframework.security: WARN
+    root: INFO
+    bf.gov.mtdpce: DEBUG
+    org.springframework.security: DEBUG
 
 facebook:
-  page-id: ${FACEBOOK_PAGE_ID:308567739007291}
-  # Secret : fourni via la variable d'environnement FACEBOOK_ACCESS_TOKEN (jamais commité).
-  access-token: ${FACEBOOK_ACCESS_TOKEN:}
+  page-id: 308567739007291
+  access-token: EAAUaCZClpIGMBQym1kANQGMj4PxAte0O1UmodKb4nETqa6nsdZCYa2BMo7UX0vkmtix9WvMXFoAw0frzSgVzsMeM3zxsnDOtTB3zxZBAkvTXDknZCYqoptw33XfKMMPZCrJJ0SG138RnDXkrjR5iwwhphEZCb2DUCxiUf8mGMxys7UPTrZCZCUyIhxQZCZB8GSJGGzZCSUr2Mgi
   graph-api-url: https://graph.facebook.com/v25.0
   base-url: https://site-test.tic.gov.bf

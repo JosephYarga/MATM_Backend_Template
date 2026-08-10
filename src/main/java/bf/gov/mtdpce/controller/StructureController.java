@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.controller;
-import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.StructureRequest;
-import bf.gov.mtdpce.dto.response.StructureResponse;
+import bf.gov.mtdpce.dto.StructureDTO;
 import bf.gov.mtdpce.service.StructureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import bf.gov.mtdpce.security.UserDetailsImpl;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,12 +33,11 @@ public class StructureController {
     @Autowired
     private StructureService structureService;
 
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     @GetMapping
     @Operation(summary = "Liste des structures")
-    public ResponseEntity<ApiResponse<Page<StructureResponse>>> getAllStructures(
+    public ResponseEntity<ApiResponse<Page<StructureDTO>>> getAllStructures(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -61,7 +56,7 @@ public class StructureController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Détail d'une structure")
-    public ResponseEntity<ApiResponse<StructureResponse>> getStructureById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<StructureDTO>> getStructureById(@PathVariable Long id) {
 
         return ResponseEntity.ok(
                 ApiResponse.success(structureService.getById(id))
@@ -71,9 +66,9 @@ public class StructureController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer une structure")
-    public ResponseEntity<StructureResponse> createStructure(
-            @RequestPart("structure") StructureRequest structureDTO,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<StructureDTO> createStructure(
+            @RequestPart("structure") StructureDTO structureDTO,
+            @RequestParam Long authorId,
             @RequestPart(value = "photo", required = false) MultipartFile photo
     ) {
 
@@ -84,7 +79,7 @@ public class StructureController {
                 structureDTO.setPhoto(filePath);
             }
 
-            return ResponseEntity.ok(structureService.create(structureDTO,userDetails.getId()));
+            return ResponseEntity.ok(structureService.create(structureDTO,authorId));
 
         } catch (IOException e) {
             throw new RuntimeException("Erreur lors de l'upload de la photo", e);
@@ -93,9 +88,9 @@ public class StructureController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<StructureResponse> updateStructure(
-            @PathVariable UUID id,
-            @RequestPart("structure") StructureRequest structureDTO,
+    public ResponseEntity<StructureDTO> updateStructure(
+            @PathVariable Long id,
+            @RequestPart("structure") StructureDTO structureDTO,
             @RequestPart(value = "photo", required = false) MultipartFile photo
     ) {
 
@@ -115,7 +110,7 @@ public class StructureController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteStructure(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteStructure(@PathVariable Long id) {
 
         structureService.delete(id);
 
@@ -129,7 +124,7 @@ public class StructureController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new BadRequestException("Type de fichier inconnu");
+            throw new RuntimeException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -142,7 +137,7 @@ public class StructureController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new BadRequestException("Type de fichier non supporté : " + contentType);
+            throw new RuntimeException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";

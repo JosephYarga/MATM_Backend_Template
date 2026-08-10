@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.entity;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,8 +16,8 @@ import java.time.LocalDateTime;
 public class Contact {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(nullable = false, length = 100)
     private String name;

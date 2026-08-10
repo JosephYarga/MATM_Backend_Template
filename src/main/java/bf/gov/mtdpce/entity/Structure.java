@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.entity;
-import java.util.UUID;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,8 +17,8 @@ import java.time.LocalDateTime;
 public class Structure {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @Column(nullable = false, length = 255)
     private String title;
@@ -38,13 +37,6 @@ public class Structure {
 
     @Column(length = 100)
     private String niveau;
-
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    /** Structure parente dans l'organigramme (null = racine). */
-    @Column(name = "parent_id")
-    private UUID parentId;
 
     @Column(name = "photo")
     private String photo;

@@ -1,5 +1,6 @@
 package bf.gov.mtdpce.service;
 
+import bf.gov.mtdpce.dto.FacebookImageDTO;
 import bf.gov.mtdpce.entity.Article;
 import bf.gov.mtdpce.entity.ArticleImage;
 import bf.gov.mtdpce.entity.FacebookImage;
@@ -42,8 +43,7 @@ public class FacebookPublisherService {
     @Value("${facebook.base-url}")
     private String baseUrl;
 
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -286,52 +286,12 @@ public class FacebookPublisherService {
     }
 
     private String construireMessage(Article article) {
-        String lien = baseUrl + "/articles/" + article.getId();
-
-        // Contenu spécifique Facebook (éditeur riche) : prioritaire s'il est renseigné.
-        String fbContent = htmlEnTexteSimple(article.getFacebookContent());
-        if (fbContent != null && !fbContent.isBlank()) {
-            return String.format("%s\n\nLire la suite : %s", fbContent, lien);
-        }
-
-        // Repli : ancien format basé sur le titre + résumé.
         return String.format(
                 "%s\n\n%s\n\nCategorie : %s\n\nLire la suite : %s",
                 article.getTitle(),
                 article.getSummary(),
-                article.getCategory() != null ? article.getCategory().getLabel() : "",
-                lien
+                article.getCategory().name(),
+                baseUrl + "/articles/" + article.getId()
         );
-    }
-
-    /**
-     * Convertit le HTML de l'éditeur riche en texte simple lisible sur Facebook
-     * (Facebook n'interprète pas le HTML) : sauts de ligne pour les blocs,
-     * suppression des balises et décodage des entités courantes.
-     */
-    private String htmlEnTexteSimple(String html) {
-        if (html == null) return null;
-
-        String texte = html
-                .replaceAll("(?i)<br\\s*/?>", "\n")
-                .replaceAll("(?i)</p>", "\n\n")
-                .replaceAll("(?i)</li>", "\n")
-                .replaceAll("(?i)<li[^>]*>", "• ")
-                .replaceAll("(?i)</(h[1-6]|div)>", "\n\n")
-                .replaceAll("<[^>]+>", "");
-
-        texte = texte
-                .replace("&nbsp;", " ")
-                .replace("&amp;", "&")
-                .replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&quot;", "\"")
-                .replace("&#39;", "'")
-                .replace("&rsquo;", "'")
-                .replace("&laquo;", "«")
-                .replace("&raquo;", "»");
-
-        // Nettoie les excès de lignes vides et les espaces en bordure.
-        return texte.replaceAll("\n{3,}", "\n\n").trim();
     }
 }

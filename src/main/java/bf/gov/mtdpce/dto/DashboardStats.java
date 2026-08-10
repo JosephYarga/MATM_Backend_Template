@@ -1,0 +1,26 @@
+package bf.gov.mtdpce.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DashboardStats {
+
+    private Long totalUsers;
+    private Long activeUsers;
+    private Long totalArticles;
+    private Long publishedArticles;
+    private Long totalProjects;
+    private Long activeProjects;
+    private Long completedProjects;
+    private Long totalDocuments;
+    private Long publicDocuments;
+    private Long totalContacts;
+    private Long pendingContacts;
+    private Double averageProjectProgress;
+}

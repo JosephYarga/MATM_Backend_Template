@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.controller;
-import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.ProjectRequest;
-import bf.gov.mtdpce.dto.response.ProjectResponse;
+import bf.gov.mtdpce.dto.ProjectDTO;
 import bf.gov.mtdpce.entity.ProjectStatus;
 import bf.gov.mtdpce.security.UserDetailsImpl;
 import bf.gov.mtdpce.service.ProjectService;
@@ -33,7 +31,7 @@ public class ProjectController {
     // Public endpoints
     @GetMapping("/public")
     @Operation(summary = "Projets publics", description = "Récupère la liste des projets")
-    public ResponseEntity<ApiResponse<Page<ProjectResponse>>> getPublicProjects(
+    public ResponseEntity<ApiResponse<Page<ProjectDTO>>> getPublicProjects(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         
@@ -43,19 +41,19 @@ public class ProjectController {
 
     @GetMapping("/public/latest")
     @Operation(summary = "Derniers projets", description = "Récupère les 5 derniers projets")
-    public ResponseEntity<ApiResponse<List<ProjectResponse>>> getLatestProjects() {
+    public ResponseEntity<ApiResponse<List<ProjectDTO>>> getLatestProjects() {
         return ResponseEntity.ok(ApiResponse.success(projectService.getLatestProjects()));
     }
 
     @GetMapping("/public/{id}")
     @Operation(summary = "Détail projet", description = "Récupère un projet par son ID")
-    public ResponseEntity<ApiResponse<ProjectResponse>> getPublicProjectById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ProjectDTO>> getPublicProjectById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(projectService.getProjectById(id)));
     }
 
     @GetMapping("/public/search")
     @Operation(summary = "Recherche de projets", description = "Recherche dans les projets")
-    public ResponseEntity<ApiResponse<Page<ProjectResponse>>> searchProjects(
+    public ResponseEntity<ApiResponse<Page<ProjectDTO>>> searchProjects(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -68,7 +66,7 @@ public class ProjectController {
     @GetMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Tous les projets", description = "Récupère tous les projets (admin)")
-    public ResponseEntity<ApiResponse<Page<ProjectResponse>>> getAllProjects(
+    public ResponseEntity<ApiResponse<Page<ProjectDTO>>> getAllProjects(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -83,7 +81,7 @@ public class ProjectController {
     @GetMapping("/status/{status}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Projets par statut", description = "Récupère les projets par statut")
-    public ResponseEntity<ApiResponse<Page<ProjectResponse>>> getProjectsByStatus(
+    public ResponseEntity<ApiResponse<Page<ProjectDTO>>> getProjectsByStatus(
             @PathVariable ProjectStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -95,15 +93,15 @@ public class ProjectController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Détail projet (admin)", description = "Récupère un projet par son ID (admin)")
-    public ResponseEntity<ApiResponse<ProjectResponse>> getProjectById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ProjectDTO>> getProjectById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(projectService.getProjectById(id)));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Créer un projet", description = "Crée un nouveau projet")
-    public ResponseEntity<ApiResponse<ProjectResponse>> createProject(
-            @Valid @RequestBody ProjectRequest projectDTO,
+    public ResponseEntity<ApiResponse<ProjectDTO>> createProject(
+            @Valid @RequestBody ProjectDTO projectDTO,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(ApiResponse.success("Projet créé", projectService.createProject(projectDTO, userDetails.getId())));
     }
@@ -111,16 +109,16 @@ public class ProjectController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier un projet", description = "Met à jour un projet existant")
-    public ResponseEntity<ApiResponse<ProjectResponse>> updateProject(
-            @PathVariable UUID id,
-            @Valid @RequestBody ProjectRequest projectDTO) {
+    public ResponseEntity<ApiResponse<ProjectDTO>> updateProject(
+            @PathVariable Long id,
+            @Valid @RequestBody ProjectDTO projectDTO) {
         return ResponseEntity.ok(ApiResponse.success("Projet mis à jour", projectService.updateProject(id, projectDTO)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un projet", description = "Supprime un projet")
-    public ResponseEntity<ApiResponse<Void>> deleteProject(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
         return ResponseEntity.ok(ApiResponse.success("Projet supprimé", null));
     }

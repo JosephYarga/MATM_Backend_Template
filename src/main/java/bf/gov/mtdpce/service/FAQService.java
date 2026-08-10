@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
 import bf.gov.mtdpce.dto.request.FAQRequest;
 import bf.gov.mtdpce.dto.response.FAQResponse;
@@ -46,7 +45,7 @@ public class FAQService {
         return faqRepository.findAllCategories();
     }
     
-    public FAQResponse getFAQById(UUID id) {
+    public FAQResponse getFAQById(Long id) {
         FAQ faq = faqRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("FAQ non trouvée avec l'id: " + id));
         faqRepository.incrementViewCount(id);
@@ -60,7 +59,7 @@ public class FAQService {
         return mapToResponse(saved);
     }
     
-    public FAQResponse updateFAQ(UUID id, FAQRequest request) {
+    public FAQResponse updateFAQ(Long id, FAQRequest request) {
         FAQ faq = faqRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("FAQ non trouvée avec l'id: " + id));
         mapRequestToEntity(request, faq);
@@ -68,14 +67,14 @@ public class FAQService {
         return mapToResponse(updated);
     }
     
-    public void deleteFAQ(UUID id) {
+    public void deleteFAQ(Long id) {
         if (!faqRepository.existsById(id)) {
             throw new ResourceNotFoundException("FAQ non trouvée avec l'id: " + id);
         }
         faqRepository.deleteById(id);
     }
     
-    public void markHelpful(UUID id, boolean helpful) {
+    public void markHelpful(Long id, boolean helpful) {
         if (!faqRepository.existsById(id)) {
             throw new ResourceNotFoundException("FAQ non trouvée avec l'id: " + id);
         }

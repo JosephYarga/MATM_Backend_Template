@@ -1,11 +1,8 @@
 package bf.gov.mtdpce.controller;
-import java.util.UUID;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.ContactRequest;
-import bf.gov.mtdpce.dto.response.ContactResponse;
+import bf.gov.mtdpce.dto.ContactDTO;
 import bf.gov.mtdpce.entity.ContactStatus;
-import bf.gov.mtdpce.exception.BadRequestException;
 import bf.gov.mtdpce.security.UserDetailsImpl;
 import bf.gov.mtdpce.service.ContactService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +31,7 @@ public class ContactController {
     // Public endpoint
     @PostMapping("/submit")
     @Operation(summary = "Soumettre un message", description = "Soumet un nouveau message de contact")
-    public ResponseEntity<ApiResponse<ContactResponse>> submitContact(@Valid @RequestBody ContactRequest contactDTO) {
+    public ResponseEntity<ApiResponse<ContactDTO>> submitContact(@Valid @RequestBody ContactDTO contactDTO) {
         return ResponseEntity.ok(ApiResponse.success("Message envoyé avec succès", contactService.submitContact(contactDTO)));
     }
 
@@ -42,7 +39,7 @@ public class ContactController {
     @GetMapping
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Tous les messages", description = "Récupère tous les messages de contact")
-    public ResponseEntity<ApiResponse<Page<ContactResponse>>> getAllContacts(
+    public ResponseEntity<ApiResponse<Page<ContactDTO>>> getAllContacts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -57,7 +54,7 @@ public class ContactController {
     @GetMapping("/status/{status}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Messages par statut", description = "Récupère les messages par statut")
-    public ResponseEntity<ApiResponse<Page<ContactResponse>>> getContactsByStatus(
+    public ResponseEntity<ApiResponse<Page<ContactDTO>>> getContactsByStatus(
             @PathVariable ContactStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -69,7 +66,7 @@ public class ContactController {
     @GetMapping("/search")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Recherche de messages", description = "Recherche dans les messages")
-    public ResponseEntity<ApiResponse<Page<ContactResponse>>> searchContacts(
+    public ResponseEntity<ApiResponse<Page<ContactDTO>>> searchContacts(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -81,35 +78,25 @@ public class ContactController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Détail message", description = "Récupère un message par son ID")
-    public ResponseEntity<ApiResponse<ContactResponse>> getContactById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<ContactDTO>> getContactById(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success(contactService.getContactById(id)));
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Modifier le statut", description = "Change le statut d'un message")
-    public ResponseEntity<ApiResponse<ContactResponse>> updateContactStatus(
-            @PathVariable UUID id,
+    public ResponseEntity<ApiResponse<ContactDTO>> updateContactStatus(
+            @PathVariable Long id,
             @RequestBody Map<String, String> body) {
-        String rawStatus = body.get("status");
-        if (rawStatus == null || rawStatus.isBlank()) {
-            throw new BadRequestException("Le champ 'status' est obligatoire.");
-        }
-        ContactStatus status;
-        try {
-            status = ContactStatus.valueOf(rawStatus.trim().toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new BadRequestException("Statut invalide : '" + rawStatus
-                    + "'. Valeurs autorisées : " + java.util.Arrays.toString(ContactStatus.values()));
-        }
+        ContactStatus status = ContactStatus.valueOf(body.get("status"));
         return ResponseEntity.ok(ApiResponse.success("Statut mis à jour", contactService.updateContactStatus(id, status)));
     }
 
     @PostMapping("/{id}/respond")
     @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Répondre au message", description = "Envoie une réponse à un message")
-    public ResponseEntity<ApiResponse<ContactResponse>> respondToContact(
-            @PathVariable UUID id,
+    public ResponseEntity<ApiResponse<ContactDTO>> respondToContact(
+            @PathVariable Long id,
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(ApiResponse.success("Réponse envoyée", 
@@ -119,7 +106,7 @@ public class ContactController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Supprimer un message", description = "Supprime un message de contact")
-    public ResponseEntity<ApiResponse<Void>> deleteContact(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteContact(@PathVariable Long id) {
         contactService.deleteContact(id);
         return ResponseEntity.ok(ApiResponse.success("Message supprimé", null));
     }

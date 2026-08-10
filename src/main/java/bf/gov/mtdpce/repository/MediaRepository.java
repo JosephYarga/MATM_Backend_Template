@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.repository;
-import java.util.UUID;
 
 import bf.gov.mtdpce.entity.Media;
 import bf.gov.mtdpce.entity.MediaType;
@@ -13,13 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MediaRepository extends JpaRepository<Media, UUID> {
+public interface MediaRepository extends JpaRepository<Media, Long> {
     
     Page<Media> findByIsPublicTrueOrderByCreatedAtDesc(Pageable pageable);
     
     Page<Media> findByMediaTypeAndIsPublicTrueOrderByCreatedAtDesc(MediaType mediaType, Pageable pageable);
     
-    Page<Media> findByAlbumIdAndIsPublicTrueOrderByDisplayOrderAsc(UUID albumId, Pageable pageable);
+    Page<Media> findByAlbumIdAndIsPublicTrueOrderByDisplayOrderAsc(Long albumId, Pageable pageable);
     
     List<Media> findByCategoryAndIsPublicTrueOrderByDisplayOrderAsc(String category);
     
@@ -30,11 +29,11 @@ public interface MediaRepository extends JpaRepository<Media, UUID> {
     
     @Modifying
     @Query("UPDATE Media m SET m.viewCount = m.viewCount + 1 WHERE m.id = :id")
-    void incrementViewCount(UUID id);
+    void incrementViewCount(Long id);
     
     @Modifying
     @Query("UPDATE Media m SET m.downloadCount = m.downloadCount + 1 WHERE m.id = :id")
-    void incrementDownloadCount(UUID id);
+    void incrementDownloadCount(Long id);
     
     long countByMediaType(MediaType mediaType);
 }

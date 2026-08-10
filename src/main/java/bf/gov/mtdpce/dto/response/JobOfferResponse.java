@@ -1,5 +1,4 @@
 package bf.gov.mtdpce.dto.response;
-import java.util.UUID;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -7,7 +6,7 @@ import java.util.List;
 
 public class JobOfferResponse {
     
-    private UUID id;
+    private Long id;
     private String title;
     private String description;
     private String contractType;
@@ -34,8 +33,8 @@ public class JobOfferResponse {
     private String createdBy;
 
     // Getters and Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

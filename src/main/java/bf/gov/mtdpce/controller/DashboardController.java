@@ -1,7 +1,7 @@
 package bf.gov.mtdpce.controller;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.response.DashboardStats;
+import bf.gov.mtdpce.dto.DashboardStats;
 import bf.gov.mtdpce.service.DashboardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

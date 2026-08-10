@@ -1,8 +1,6 @@
 package bf.gov.mtdpce.service;
-import java.util.UUID;
 
-import bf.gov.mtdpce.dto.request.ContactRequest;
-import bf.gov.mtdpce.dto.response.ContactResponse;
+import bf.gov.mtdpce.dto.ContactDTO;
 import bf.gov.mtdpce.entity.Contact;
 import bf.gov.mtdpce.entity.ContactStatus;
 import bf.gov.mtdpce.entity.User;
@@ -26,26 +24,26 @@ public class ContactService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<ContactResponse> getAllContacts(Pageable pageable) {
-        return contactRepository.findAll(pageable).map(this::convertToResponse);
+    public Page<ContactDTO> getAllContacts(Pageable pageable) {
+        return contactRepository.findAll(pageable).map(this::convertToDTO);
     }
 
-    public Page<ContactResponse> getContactsByStatus(ContactStatus status, Pageable pageable) {
-        return contactRepository.findByStatus(status, pageable).map(this::convertToResponse);
+    public Page<ContactDTO> getContactsByStatus(ContactStatus status, Pageable pageable) {
+        return contactRepository.findByStatus(status, pageable).map(this::convertToDTO);
     }
 
-    public Page<ContactResponse> searchContacts(String search, Pageable pageable) {
-        return contactRepository.searchContacts(search, pageable).map(this::convertToResponse);
+    public Page<ContactDTO> searchContacts(String search, Pageable pageable) {
+        return contactRepository.searchContacts(search, pageable).map(this::convertToDTO);
     }
 
-    public ContactResponse getContactById(UUID id) {
+    public ContactDTO getContactById(Long id) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact", "id", id));
-        return convertToResponse(contact);
+        return convertToDTO(contact);
     }
 
     @Transactional
-    public ContactResponse submitContact(ContactRequest contactDTO) {
+    public ContactDTO submitContact(ContactDTO contactDTO) {
         Contact contact = Contact.builder()
                 .name(contactDTO.getName())
                 .email(contactDTO.getEmail())
@@ -55,19 +53,19 @@ public class ContactService {
                 .status(ContactStatus.NON_LU)
                 .build();
 
-        return convertToResponse(contactRepository.save(contact));
+        return convertToDTO(contactRepository.save(contact));
     }
 
     @Transactional
-    public ContactResponse updateContactStatus(UUID id, ContactStatus status) {
+    public ContactDTO updateContactStatus(Long id, ContactStatus status) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact", "id", id));
         contact.setStatus(status);
-        return convertToResponse(contactRepository.save(contact));
+        return convertToDTO(contactRepository.save(contact));
     }
 
     @Transactional
-    public ContactResponse respondToContact(UUID id, String response, UUID respondedById) {
+    public ContactDTO respondToContact(Long id, String response, Long respondedById) {
         Contact contact = contactRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact", "id", id));
 
@@ -79,11 +77,11 @@ public class ContactService {
         contact.setRespondedAt(LocalDateTime.now());
         contact.setStatus(ContactStatus.TRAITE);
 
-        return convertToResponse(contactRepository.save(contact));
+        return convertToDTO(contactRepository.save(contact));
     }
 
     @Transactional
-    public void deleteContact(UUID id) {
+    public void deleteContact(Long id) {
         if (!contactRepository.existsById(id)) {
             throw new ResourceNotFoundException("Contact", "id", id);
         }
@@ -94,8 +92,8 @@ public class ContactService {
         return contactRepository.countPendingContacts();
     }
 
-    private ContactResponse convertToResponse(Contact contact) {
-        ContactResponse.ContactResponseBuilder builder = ContactResponse.builder()
+    private ContactDTO convertToDTO(Contact contact) {
+        ContactDTO.ContactDTOBuilder builder = ContactDTO.builder()
                 .id(contact.getId())
                 .name(contact.getName())
                 .email(contact.getEmail())

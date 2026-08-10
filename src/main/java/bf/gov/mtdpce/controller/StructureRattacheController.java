@@ -1,9 +1,7 @@
 package bf.gov.mtdpce.controller;
-import bf.gov.mtdpce.exception.BadRequestException;
 
 import bf.gov.mtdpce.dto.ApiResponse;
-import bf.gov.mtdpce.dto.request.StructureRattacheRequest;
-import bf.gov.mtdpce.dto.response.StructureRattacheResponse;
+import bf.gov.mtdpce.dto.StructureRattacheDTO;
 import bf.gov.mtdpce.service.StructureRattacheService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,12 +32,11 @@ public class StructureRattacheController {
     @Autowired
     private StructureRattacheService service;
 
-    @org.springframework.beans.factory.annotation.Value("${app.upload.base-path:/opt/mtdpce/uploads}")
-    private String UPLOAD_BASE_PATH;
+    private static final String UPLOAD_BASE_PATH = "/opt/mtdpce/uploads";
 
     @GetMapping
     @Operation(summary = "Liste des structures rattachees")
-    public ResponseEntity<ApiResponse<Page<StructureRattacheResponse>>> getAll(
+    public ResponseEntity<ApiResponse<Page<StructureRattacheDTO>>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
@@ -53,8 +50,8 @@ public class StructureRattacheController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Creer une structure rattache")
-    public ResponseEntity<StructureRattacheResponse> create(
-            @RequestPart("structure") StructureRattacheRequest dto,
+    public ResponseEntity<StructureRattacheDTO> create(
+            @RequestPart("structure") StructureRattacheDTO dto,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
 
         try {
@@ -73,9 +70,9 @@ public class StructureRattacheController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "mettre à jour une structure rattache")
-    public ResponseEntity<StructureRattacheResponse> update(
-            @PathVariable UUID id,
-            @RequestPart("structure") StructureRattacheRequest dto,
+    public ResponseEntity<StructureRattacheDTO> update(
+            @PathVariable Long id,
+            @RequestPart("structure") StructureRattacheDTO dto,
             @RequestPart(value = "logo", required = false) MultipartFile logo) {
 
         try {
@@ -93,7 +90,7 @@ public class StructureRattacheController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
 
         service.delete(id);
 
@@ -107,7 +104,7 @@ public class StructureRattacheController {
         String contentType = file.getContentType();
 
         if (contentType == null) {
-            throw new BadRequestException("Type de fichier inconnu");
+            throw new RuntimeException("Type de fichier inconnu");
         }
 
         boolean isImage = contentType.startsWith("image/");
@@ -120,7 +117,7 @@ public class StructureRattacheController {
         ).contains(contentType);
 
         if (!isImage && !isDocument) {
-            throw new BadRequestException("Type de fichier non supporté : " + contentType);
+            throw new RuntimeException("Type de fichier non supporté : " + contentType);
         }
 
         String folder = isImage ? "images" : "documents";
