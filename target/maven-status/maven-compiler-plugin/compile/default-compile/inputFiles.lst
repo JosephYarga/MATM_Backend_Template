@@ -1,236 +1,180 @@
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ArticleImageResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/NewsletterController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/AgendaResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ProjectStatus.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/DocumentBrowseResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Article.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/MinistreRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ProjectService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/NewsletterSubscriptionRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/FAQService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/FlashInfoPriority.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/StructureRattacheRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Document.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ConseilRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/AuthTokenFilter.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/StructureRattacheService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/PageVisitRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/MinistreRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ConseilResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/DocumentRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/JobOfferStatus.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/AgendaController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ServicesService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/exception/ResourceNotFoundException.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/SearchResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/UserDetailsImpl.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/AnalyticsService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/PasswordResetTokenRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/MinistereController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/FacebookConfigRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ServicesRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ProjectRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/NewsletterService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/EventStatus.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/FAQRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ArticleImage.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/FlashInfoController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/SearchService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/SearchRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ProjetCategorieRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/RoleRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ProjetCategorieRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/TypeController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/StructureController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ServicesController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/FacebookPublisherService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/MissionRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/EventService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/config/WebSecurityConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/DomaineService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/RateLimitingFilter.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/DocumentCategory.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/StructureRattacheResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/TickerConfigService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/EventResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/FlashInfoResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Conseil.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/MediaResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Contact.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ContactStatus.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/event/ArticlePublishedEvent.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ArticleImageRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/config/OpenApiConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/FAQRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/SearchController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/EventController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/MinistereResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ArticleCategory.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ThemeController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/FAQResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Media.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ProjetCategorieService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/exception/BadRequestException.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/EServiceService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/JobOfferRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/AgendaStatus.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Event.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/BannerController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/FacebookImageResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/MinistreController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/StructureType.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Role.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/DashboardController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/auth/LoginRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/StructureRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/DashboardStats.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/EService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ServiceResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/MissionResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/UserController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ThemeResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/AuthController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Theme.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/AgendaImageRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ServiceRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/StructureRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/PublicController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/StatistiquePublicRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/MissionController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/AuthEntryPointJwt.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ContactResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/auth/RegisterRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/config/DataInitializer.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/StatistiquePublicController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/UserRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ProjectResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/FlashInfoRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/UserService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ArticleCategoryRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ContactController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/StructureResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ServicesRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/SitemapController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/EventRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/MissionRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/NewsletterSubscriptionRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/JwtUtils.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/TypeResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ArticleCategoryResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ArticleCategoryService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/TrackRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/auth/JwtResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/MinistreService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/EServiceRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/UserResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/HealthController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Services.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/AgendaRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/PageVisit.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/FacebookImageRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/FAQ.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/EventRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/AgendaService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/DocumentService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ConseilController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/AuthService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/User.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ProjetCategorieController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Agenda.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/MinistereService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Project.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/FlashInfoService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ThemeService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/UserRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ProjetCategorie.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Mission.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/BannerService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/JobOffer.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Structure.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/FacebookImage.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/BannerRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ThemeRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/StructureService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/BannerRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/AgendaRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/MinistreResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/JobOfferRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ProjetCategorieResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Ministre.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/StructureRattache.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/AnalyticsController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ArticleResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ProjectController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/BannerResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/PaginatedResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/DocumentResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/PasswordResetToken.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Type.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/TickerConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/FAQController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/MediaRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ConseilRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/StatistiquePublic.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/StructureRattacheController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/DomaineRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/TypeService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ArticleRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/AnalyticsOverview.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/TypeRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/security/UserDetailsServiceImpl.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ProjectRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/PasswordResetService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/EServiceController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ERole.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/MailService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/TickerConfigController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/MtdpceApplication.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/MissionService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/DomaineRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Domaine.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/MediaType.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Ministere.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ArticleCategoryRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/MinistereRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/JobOfferResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/DocumentRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/StatistiquePublicService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/NewsletterSubscription.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/LegalTextResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/TickerConfigRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ArticleRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/FacebookConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/UserUpdateRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ThemeRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/MediaRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ContactService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/ServicesResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/DomaineController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/AgendaImageResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/ContactRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ArticleService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/DashboardService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/StatistiquePublicResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/DocumentController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/config/WebConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/ContactRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Banner.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/FlashInfo.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/AlbumRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/AgendaImage.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/exception/GlobalExceptionHandler.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/FlashInfoRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/service/ConseilService.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/StatistiquePublicRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ArticleCategoryController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/controller/ArticleController.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/LegalTextRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/ApiResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/NewsletterResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/response/DomaineResponse.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/dto/request/StructureRattacheRequest.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/MinistereRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/repository/TypeRepository.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/Album.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/config/CorsConfig.java
-/Users/severindembele/Desktop/CodePool2025/site_type_ministere/MTDPCE/backendMTDPCE/src/main/java/bf/gov/mtdpce/entity/ArticleStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\auth\RegisterRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Document.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\security\UserDetailsImpl.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\EventResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\MediaResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\StatistiquePublic.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\FAQRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Media.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\security\UserDetailsServiceImpl.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\DomaineService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ProjectRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\TypeService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\StatistiquePublicRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\SearchResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\DocumentController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\MinistereService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\JobOffer.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\exception\GlobalExceptionHandler.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\MatmApplication.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\config\CorsConfig.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\JobOfferStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Ministere.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\MinistreService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ServicesRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ProjetCategorieController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\FlashInfoRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ArticleStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\AgendaImageDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ProjetCategorie.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ArticleDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\AgendaDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ContactRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ProjectDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Services.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\FlashInfoRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\NewsletterResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\AgendaService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\AgendaRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\DashboardController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\MinistreRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ProjectController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\AlbumRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\DocumentService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Structure.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\FlashInfoController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Event.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ServicesService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\ServiceResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\NewsletterSubscription.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\EServiceController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\config\WebSecurityConfig.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\EServiceRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\StatistiquePublicController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ProjetCategorieRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\security\AuthEntryPointJwt.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\FAQService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\DocumentDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\CreateUserDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ThemeService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\TypeDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Ministre.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ArticleService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\security\AuthTokenFilter.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\MinistreDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Project.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\EventRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\MediaRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\DomaineRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Agenda.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\SearchRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ProjectStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\StructureRattacheRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\DocumentCategory.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Theme.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\StructureRattacheController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\MinistereController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\TypeController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ProjetCategorieDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\StructureType.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\PublicController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Album.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\RoleRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\DomaineController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\MediaRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\FlashInfoService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\MissionDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ERole.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\UserRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\MissionRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\JobOfferRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\AgendaController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\StructureController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\StatistiquePublicDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\exception\BadRequestException.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\AuthController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\AgendaStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\DocumentRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\UserService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\LegalTextResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\FAQResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\NewsletterController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\EventService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Article.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\MinistereDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\PaginatedResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ArticleRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ContactService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\FlashInfoPriority.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\DashboardStats.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\NewsletterSubscriptionRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Type.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\config\DataInitializer.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\MissionController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\AgendaImageRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Mission.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Role.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\MinistreController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\StructureDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ArticleImageDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ServicesDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ArticleImage.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\StructureRattacheDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\FAQRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\NewsletterService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\StructureService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\AuthService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\EventStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ArticleController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\DomaineDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\FacebookImageDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\FacebookImage.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\NewsletterSubscriptionRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\MissionService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\MediaType.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ThemeDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\LegalTextRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\event\ArticlePublishedEvent.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\JobOfferResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\JobOfferRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\StructureRattache.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\AgendaImage.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\User.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\StructureRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ApiResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\exception\ResourceNotFoundException.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\ContactDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\TypeRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Domaine.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\auth\JwtResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\FacebookPublisherService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\ThemeRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ContactStatus.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\UserDTO.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\auth\LoginRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\EventController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\Contact.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ProjetCategorieService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ServicesController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\FlashInfo.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\EServiceService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\ProjectService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\config\OpenApiConfig.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\MinistereRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\StatistiquePublicService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\UserController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\ArticleCategory.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\security\JwtUtils.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\DashboardService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\FAQ.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\repository\EventRepository.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\StructureRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\config\WebConfig.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\FAQController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\service\StructureRattacheService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ThemeController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\entity\EService.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\controller\ContactController.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\FlashInfoResponse.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\request\ServiceRequest.java
+C:\Users\JOSEPH WISDOM YARGA\MATM\MATM_Backend_Template\src\main\java\bf\gov\matm\dto\response\StructureResponse.java

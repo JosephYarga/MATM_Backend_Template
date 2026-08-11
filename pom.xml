@@ -11,12 +11,11 @@
         <relativePath/>
     </parent>
     
-    <groupId>bf.gov.mtdpce</groupId>
-    <artifactId>mtdpce-api</artifactId>
+    <groupId>bf.gov.matm</groupId>
+    <artifactId>matm-api</artifactId>
     <version>1.0.0</version>
-    <name>MTDPCE API</name>
-    <description>API REST pour le Ministère de la Transition Digitale, des Postes et des Communications Électroniques du Burkina Faso</description>
-    
+    <name>MATM API</name>
+    <description>API REST pour le Ministère de l’Administration territoriale et de la Mobilité du Burkina Faso</description>
     <properties>
         <java.version>17</java.version>
         <jjwt.version>0.12.3</jjwt.version>

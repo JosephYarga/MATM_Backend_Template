@@ -3,16 +3,16 @@ server:
 
 spring:
   application:
-    name: mtdpce-api
+    name: matm-api
   servlet:
     multipart:
       enabled: true
       max-file-size: 5MB
       max-request-size: 5MB
   datasource:
-    url: jdbc:postgresql://localhost:5432/mtdpce_db
-    username: mtdpce_user
-    password: mtdpce2026
+    url: jdbc:postgresql://localhost:5432/matm_db
+    username: matm_user
+    password: matm2026
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -21,7 +21,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: mtdpce
+        default_schema: matm
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
@@ -31,7 +31,7 @@ spring:
 
 # JWT Configuration
 jwt:
-  secret: MTDPCEBurkinaFaso2024SecretKeyForJWTTokenGenerationAndValidation256Bits
+  secret: MATMBurkinaFaso2024SecretKeyForJWTTokenGenerationAndValidation256Bits
   expiration: 86400000
 
 # Swagger / OpenAPI Configuration
@@ -55,7 +55,7 @@ cors:
 logging:
   level:
     root: INFO
-    bf.gov.mtdpce: DEBUG
+    bf.gov.matm: DEBUG
     org.springframework.security: DEBUG
 
 facebook:
